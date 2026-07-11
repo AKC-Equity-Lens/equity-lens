@@ -22,7 +22,7 @@ Equity Lens helps selection committees detect potential bias patterns (gender di
 
 ## How to Use
 
-1. Open `EquityLens.html` in your browser
+1. Open `index.html` in your browser
 2. Login as a committee member
 3. Add candidate information
 4. Click "Run Bias Check" to see the dashboard
