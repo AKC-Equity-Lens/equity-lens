@@ -1,0 +1,17 @@
+name = "equity-lens-ballots"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[[durable_objects.bindings]]
+name = "BALLOT_BOX"
+class_name = "BallotBox"
+
+# SQLite backend is required: it gives atomic transactions, so two members
+# voting at the same moment cannot overwrite each other's increment.
+# It is also the only Durable Object storage backend on the Workers free plan.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["BallotBox"]
+
+[observability]
+enabled = true
