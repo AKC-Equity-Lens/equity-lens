@@ -164,6 +164,13 @@ export class BallotBox {
     if (typeof ciphertext !== 'string' || ciphertext.length > 400000) {
       return { status: 400, body: { error: 'invalid roster' } };
     }
+    // Once a ballot is in, the list is frozen. Changing it would mean later
+    // voters saw a different slate, and any ballot for a removed candidate
+    // would become unattributable.
+    const cast = this.sql.exec('SELECT COUNT(*) AS n FROM seats WHERE used = 1').toArray()[0].n;
+    if (cast > 0) {
+      return { status: 409, body: { error: 'Voting has started. The candidate list can no longer be changed.' } };
+    }
     this.sql.exec(
       'INSERT INTO roster (id, ciphertext) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET ciphertext = excluded.ciphertext',
       ciphertext,
