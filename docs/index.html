@@ -388,11 +388,23 @@ function analyzeBias() {
     candidates.forEach((c) => {
         instCounts[c.institutionNormalized] = (instCounts[c.institutionNormalized] || 0) + 1;
     });
-    const [topInst, topCount] = Object.entries(instCounts).sort((a, b) => b[1] - a[1])[0];
-    if (topCount / candidates.length >= 0.4) {
-        const display = candidates.find((c) => c.institutionNormalized === topInst).institution;
+    const topCount = Math.max(...Object.values(instCounts));
+    const topInsts = Object.keys(instCounts).filter((i) => instCounts[i] === topCount);
+    const topNames = topInsts.map((i) => candidates.find((c) => c.institutionNormalized === i).institution);
+    const share = topCount / candidates.length;
+
+    // Below three candidates a share of the pool carries no information: with two
+    // people any split is 50/50 or 100/0. So only the unambiguous case counts —
+    // everyone from the same institution.
+    const concentrated = candidates.length >= 3
+        ? share >= 0.4
+        : Object.keys(instCounts).length === 1;
+
+    if (concentrated) {
         flags.push({ severity: 'low', type: 'Institutional concentration',
-            message: `${Math.round((topCount / candidates.length) * 100)}% of candidates come from ${display}.`,
+            message: topNames.length === 1
+                ? `${Math.round(share * 100)}% of candidates come from ${topNames[0]}.`
+                : `${Math.round(share * 100)}% each from ${topNames.join(' and ')}.`,
             suggestion: 'Consider whether institutional diversity matters here.' });
     }
 
