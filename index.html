@@ -1,1054 +1,755 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equity Lens – Equitable Decision Co-Pilot | AKC DPG</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f3f4f6;
-            color: #1f2937;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 8px;
-        }
-        .title-section h1 {
-            font-size: 28px;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .akc-badge {
-            background: #2563eb;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            display: inline-block;
-        }
-        .org-line {
-            font-size: 11px;
-            color: #4b5563;
-            margin-top: 4px;
-            letter-spacing: 0.3px;
-        }
-        .subtitle {
-            color: #6b7280;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-        h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 8px;
-        }
-        .section {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid #e5e7eb;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .form-field label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-        }
-        .required-star {
-            color: #ef4444;
-            margin-left: 2px;
-        }
-        .form-field .helper {
-            font-size: 11px;
-            color: #6b7280;
-        }
-        .info-box {
-            background: #eff6ff;
-            border-left: 3px solid #3b82f6;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #1e40af;
-            margin-top: 4px;
-        }
-        .mq-display {
-            background: #d1fae5;
-            border-left: 3px solid #10b981;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #065f46;
-            margin-top: 8px;
-            text-align: center;
-        }
-        input, select, textarea {
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            ring: 2px solid #3b82f6;
-        }
-        button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background: #1d4ed8;
-        }
-        button.secondary {
-            background: #10b981;
-        }
-        button.secondary:hover {
-            background: #059669;
-        }
-        button.outline {
-            background: white;
-            color: #2563eb;
-            border: 1px solid #2563eb;
-        }
-        button.outline:hover {
-            background: #eff6ff;
-        }
-        button.danger {
-            background: #ef4444;
-        }
-        button.small {
-            padding: 4px 12px;
-            font-size: 12px;
-        }
-        .candidate-list {
-            margin-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 16px;
-        }
-        .candidate-item {
-            background: #f9fafb;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .badge {
-            background: #e5e7eb;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-        .badge-green {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            background: #f9fafb;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .stat-label {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-        .flag {
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border-left: 4px solid;
-        }
-        .flag.high { background: #fef2f2; border-left-color: #ef4444; }
-        .flag.medium { background: #fffbeb; border-left-color: #f59e0b; }
-        .flag.low { background: #eff6ff; border-left-color: #3b82f6; }
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 8px;
-        }
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: normal;
-            font-size: 13px;
-        }
-        .hidden {
-            display: none;
-        }
-        .counter {
-            font-size: 14px;
-            color: #6b7280;
-            margin-top: 12px;
-            font-weight: 500;
-        }
-        footer {
-            text-align: center;
-            padding: 24px;
-            color: #9ca3af;
-            font-size: 12px;
-            border-top: 1px solid #e5e7eb;
-            margin-top: 16px;
-        }
-        .example-hint {
-            background: #fef3c7;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            border-left: 3px solid #f59e0b;
-        }
-        .flex-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .member-badge {
-            background: #e0e7ff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-        }
-        .results-table th, .results-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .results-table th {
-            background: #f3f4f6;
-            font-weight: 600;
-        }
-        .vote-count {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-        }
-        .login-section {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .chair-only {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #1f2937;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .error-border {
-            border: 1px solid #ef4444 !important;
-            background: #fef2f2 !important;
-        }
-        .vote-buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        .vote-btn {
-            background: #2563eb;
-            cursor: pointer;
-        }
-        .vote-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        .clear-btn {
-            background: #6b7280;
-        }
-        .clear-btn:hover {
-            background: #4b5563;
-        }
-        .success-message {
-            color: #10b981;
-            font-weight: 500;
-            padding: 12px;
-            background: #d1fae5;
-            border-radius: 8px;
-            margin-top: 12px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equity Lens - equitable decision co-pilot | AKC DPG</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f3f4f6; color: #1f2937; padding: 20px; line-height: 1.55;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .title-section h1 { font-size: 26px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .akc-badge { background: #2563eb; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+    .org-line { font-size: 11px; color: #4b5563; margin-top: 4px; }
+    .subtitle { color: #6b7280; font-size: 14px; margin-top: 8px; }
+    h2 { font-size: 19px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+    h3 { font-size: 16px; margin: 20px 0 10px; }
+    .section { background: #f9fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #e5e7eb; }
+    .section-title { font-size: 17px; font-weight: 600; margin-bottom: 16px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 18px; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field label { font-size: 13px; font-weight: 600; color: #374151; }
+    .required-star { color: #ef4444; margin-left: 2px; }
+    .helper { font-size: 11px; color: #6b7280; }
+    .info-box { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 8px; font-size: 12px; color: #1e40af; margin-top: 8px; }
+    .warn-box { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px; border-radius: 8px; font-size: 13px; color: #92400e; margin-top: 8px; }
+    .mq-display { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 8px; font-size: 13px; color: #1e40af; margin-top: 8px; text-align: center; }
+    input, select, textarea { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; width: 100%; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid #3b82f6; outline-offset: 1px; border-color: #3b82f6; }
+    button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #9ca3af; cursor: not-allowed; }
+    button.secondary { background: #10b981; }
+    button.secondary:hover { background: #059669; }
+    button.secondary:disabled, button.outline:disabled, button.danger:disabled { background: #9ca3af; color: white; border-color: #9ca3af; }
+    button.outline { background: white; color: #2563eb; border: 1px solid #2563eb; }
+    button.danger { background: #ef4444; }
+    button.small { padding: 5px 12px; font-size: 12px; }
+    .candidate-item { background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .badge { background: #e5e7eb; padding: 2px 8px; border-radius: 20px; font-size: 12px; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .stat-card { background: #f9fafb; padding: 16px; border-radius: 12px; text-align: center; }
+    .stat-number { font-size: 26px; font-weight: bold; }
+    .stat-label { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .flag { padding: 14px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid; border-radius: 0 12px 12px 0; }
+    .flag.high { background: #fef2f2; border-left-color: #ef4444; }
+    .flag.medium { background: #fffbeb; border-left-color: #f59e0b; }
+    .flag.low { background: #eff6ff; border-left-color: #3b82f6; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 16px; }
+    .checkbox-group label { display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 13px; }
+    .checkbox-group input { width: auto; }
+    .hidden { display: none; }
+    .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .error-border { border: 1px solid #ef4444 !important; background: #fef2f2 !important; }
+    .seal-status { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 12px; padding: 16px; text-align: center; font-size: 15px; color: #3730a3; }
+    .seat-link { font-family: ui-monospace, monospace; font-size: 12px; background: #f3f4f6; padding: 8px; border-radius: 6px; word-break: break-all; margin-bottom: 6px; }
+    .results-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .results-table th, .results-table td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+    .results-table th { background: #f3f4f6; }
+    .msg { padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 14px; }
+    .msg.ok { background: #d1fae5; color: #065f46; }
+    .msg.err { background: #fef2f2; color: #991b1b; }
+    footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
+    table.detail { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.detail th, table.detail td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    table.detail th { background: #f3f4f6; }
+</style>
 </head>
 <body>
 <div class="container">
-    <div class="card">
-        <div class="header">
-            <div class="title-section">
-                <h1>
-                    <span class="akc-badge">AKC</span>
-                    🔍 Equity Lens
-                </h1>
-                <div class="org-line">Working Group on Equal Opportunities of the German Physical Society (AKC)</div>
-                <div class="subtitle">Equitable decision co-pilot for award & speaker selection</div>
-            </div>
-        </div>
 
-        <!-- Login / Member Section -->
-        <div class="login-section" id="loginSection">
-            <div class="flex-row">
-                <select id="memberSelect">
-                    <option value="">-- Select committee member --</option>
-                    <option value="chairperson">👑 Chairperson (can see results)</option>
-                    <option value="member1">👤 Member 1</option>
-                    <option value="member2">👤 Member 2</option>
-                    <option value="member3">👤 Member 3</option>
-                    <option value="member4">👤 Member 4</option>
-                    <option value="member5">👤 Member 5</option>
-                </select>
-                <button onclick="login()">Login / Switch Member</button>
-                <button onclick="forceClearAllData()" class="clear-btn" style="background:#ef4444;">🗑️ Force Clear & Reset All</button>
-            </div>
-            <div id="memberStatus">
-                <span class="member-badge">🔒 Not logged in</span>
-            </div>
-        </div>
-
-        <div class="example-hint">
-            💡 <strong>How multi-user voting works:</strong> Each committee member logs in separately, casts their private vote, then switches to next member.<br>
-            <strong>m-quotient = h-index ÷ years since first publication</strong> (values > 1.0 indicate excellent career-stage productivity)<br>
-            🏛️ <strong>Institutions are case-insensitive</strong> – "TU Berlin", "tu berlin", "Tu Berlin" are treated as the same.
-        </div>
-
-        <!-- Hidden until logged in -->
-        <div id="committeeTools" class="hidden">
-            
-            <!-- SECTION 1: CANDIDATE INFO -->
-            <div class="section">
-                <div class="section-title">📋 Candidate Info</div>
-                <div class="form-grid">
-                    <div class="form-field">
-                        <label>👤 Candidate Name <span class="required-star">*</span></label>
-                        <input type="text" id="candidateName" placeholder="e.g., Dr. Anna Schmidt">
-                    </div>
-                    <div class="form-field">
-                        <label>📚 Career Stage <span class="required-star">*</span></label>
-                        <select id="careerStage">
-                            <option value="">Select one</option>
-                            <option>PhD candidate</option>
-                            <option>Postdoc</option>
-                            <option>Junior faculty</option>
-                            <option>Senior faculty</option>
-                            <option>Emeritus</option>
-                        </select>
-                    </div>
-                    <div class="form-field">
-                        <label>🏛️ Institution <span class="required-star">*</span></label>
-                        <input type="text" id="institution" placeholder="e.g., TU Berlin">
-                    </div>
-                    <div class="form-field">
-                        <label>⚧ Gender <span class="required-star">*</span></label>
-                        <select id="gender">
-                            <option value="">Select one</option>
-                            <option value="female">Woman</option>
-                            <option value="male">Man</option>
-                            <option value="other">Other / Non-binary</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION 2: ACADEMIC IMPACT -->
-            <div class="section">
-                <div class="section-title">📊 Academic Impact</div>
-                <div class="form-grid">
-                    <div class="form-field">
-                        <label>📊 h-index <span class="required-star">*</span></label>
-                        <div class="flex-row">
-                            <input type="number" id="hindex" placeholder="e.g., 12" min="0" value="0" style="flex: 1;">
-                            <button type="button" class="outline" onclick="openScopusSearch()">🔍 Look up on Scopus</button>
-                        </div>
-                        <div class="info-box">📖 h-index = h papers with at least h citations each.</div>
-                    </div>
-
-                    <div class="form-field">
-                        <label>📅 Year of first publication <span class="required-star">*</span></label>
-                        <input type="number" id="firstPubYear" placeholder="e.g., 2018" min="1950" max="2026" value="2020">
-                    </div>
-
-                    <div class="form-field">
-                        <label>🔁 Prior invitations (last 3 years) <span class="required-star">*</span></label>
-                        <input type="number" id="priorInvites" min="0" value="0">
-                        <div class="helper">How many times invited to similar events?</div>
-                    </div>
-                </div>
-
-                <div class="mq-display" id="mqDisplay">
-                    📈 m-quotient = —
-                </div>
-
-                <div class="form-field" style="margin-bottom: 16px; margin-top: 16px;">
-                    <label>📄 Key publications (max 3 – one per line)</label>
-                    <textarea id="keyPubs" rows="2" placeholder="e.g., Title, Journal, Year (2023)" style="width: 100%;"></textarea>
-                </div>
-            </div>
-
-            <!-- SECTION 3: IMPACT -->
-            <div class="section">
-                <div class="section-title">🏆 Impact</div>
-                <div class="checkbox-group" id="impactCheckboxes">
-                    <label><input type="checkbox" value="patent"> Patent / technology transfer</label>
-                    <label><input type="checkbox" value="policy"> Policy citation (gov/NGO report)</label>
-                    <label><input type="checkbox" value="media"> Major media coverage</label>
-                    <label><input type="checkbox" value="award"> Major award / prize</label>
-                </div>
-            </div>
-
-            <!-- SECTION 4: CAREER STAGE CONSIDERATIONS -->
-            <div class="section">
-                <div class="section-title">👶 Career Stage Considerations</div>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" id="parentalLeaveCheckbox"> Parental leave &gt; 6 months</label>
-                    <label><input type="checkbox" id="careerBreakCheckbox"> Career interruption due to illness / caregiving</label>
-                    <label><input type="checkbox" id="nonTraditionalCheckbox"> Non-traditional career path (industry, alt-ac, etc.)</label>
-                </div>
-                <div class="helper" style="margin-top: 8px;">These factors help contextualize productivity and career stage fairly.</div>
-            </div>
-
-            <button onclick="addCandidate()">+ Add Candidate</button>
-            <div class="counter" id="counter"></div>
-
-            <div id="candidateList" class="candidate-list">
-                <p style="color: #9ca3af; text-align: center;">No nominees yet. Fill out the form above and click "Add Candidate".</p>
-            </div>
-
-            <hr>
-
-            <div style="text-align: center; margin: 16px 0;">
-                <button class="secondary" onclick="analyzeBias()" style="font-size: 18px; padding: 12px 32px;">
-                    🔍 Step 2: Run Bias Check
-                </button>
-            </div>
-
-            <div id="dashboard" class="hidden">
-                <h2>📊 Step 3: Bias Dashboard</h2>
-                <div class="stats-grid" id="statsGrid"></div>
-                <div id="flagsContainer"></div>
-                <div id="candidatesDetail"></div>
-            </div>
-
-            <div id="voteArea" class="hidden" style="margin-top: 20px;">
-                <h2>🗳️ Step 4: Cast Your Private Vote</h2>
-                <div id="voteButtonsContainer" class="vote-buttons"></div>
-                <div id="voteResult" style="margin-top: 16px; padding: 12px; background: #f3f4f6; border-radius: 8px;"></div>
-            </div>
-        </div>
+<div class="card">
+    <div class="title-section">
+        <h1><span class="akc-badge">AKC</span> Equity Lens</h1>
+        <div class="org-line">Working Group on Equal Opportunities of the German Physical Society (AKC)</div>
+        <div class="subtitle">Equitable decision co-pilot for award and speaker selection</div>
     </div>
-
-    <!-- Results Section -->
-    <div id="resultsCard" class="card hidden chair-only">
-        <h2>📊 Committee Voting Results (Chairperson View)</h2>
-        <div id="resultsContainer">
-            <p>No votes cast yet. Ask committee members to log in and vote.</p>
-        </div>
-        <button onclick="exportResults()">📎 Export Results (JSON)</button>
-        <button onclick="resetAllVotes()" style="margin-left: 12px; background: #ef4444;">🔄 Reset Votes (Keep Candidates)</button>
-    </div>
-
-    <footer>
-        <span class="akc-badge" style="background: #9ca3af; font-size: 10px;">AKC</span> Working Group on Equal Opportunities of the German Physical Society (DPG-AKC)<br>
-        ⚡ A speedometer, not a speed limit. | 🔒 Each member votes privately | 👑 Only Chairperson sees totals
-    </footer>
 </div>
 
-<script>
-    // ========== DATA STORAGE ==========
-    let candidates = [];
-    let sessionId = 'session_' + Date.now();
-    let currentMember = null;
-    let currentDashboard = null;
-    let aggregatedVotes = {};
+<!-- ROLE PICKER -->
+<div class="card" id="rolePicker">
+    <h2>Start or join a session</h2>
+    <p style="font-size:14px;color:#4b5563;margin-bottom:16px;">
+        The chair opens a session and sends one private link to each committee member.
+        Members open their link on their own device.
+    </p>
+    <div class="form-grid">
+        <div class="form-field">
+            <label for="quorum">How many members will vote?<span class="required-star">*</span></label>
+            <input type="number" id="quorum" min="2" max="50" value="5">
+            <div class="helper">Results stay sealed until this many ballots are in.</div>
+        </div>
+    </div>
+    <button id="btnOpenSession">Open session as chair</button>
+    <div id="roleMsg"></div>
+</div>
 
-    function normalizeInstitution(inst) {
-        if (!inst) return 'Other';
-        return inst.trim().toLowerCase().replace(/\s+/g, ' ');
-    }
+<!-- SEAT LINKS (chair) -->
+<div class="card hidden" id="seatLinksCard">
+    <h2>Send one link to each member</h2>
+    <div class="warn-box">
+        Each link works once. Send them privately, one per person. Anyone holding a
+        link can cast that seat's ballot, so do not post them in a shared channel.
+    </div>
+    <div id="seatLinksList" style="margin-top:16px;"></div>
+    <button class="outline" id="btnCopyLinks">Copy all links</button>
+</div>
 
-    function forceClearAllData() {
-        if (confirm('⚠️ FORCE CLEAR EVERYTHING?\n\nThis will delete ALL candidates and votes.\nClick OK to reset.')) {
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && (key.startsWith('equityLens_') || key.startsWith('voted_'))) {
-                    keysToRemove.push(key);
-                }
-            }
-            keysToRemove.forEach(key => localStorage.removeItem(key));
-            candidates = [];
-            aggregatedVotes = {};
-            currentDashboard = null;
-            document.getElementById('candidateList').innerHTML = '<p style="color:#9ca3af;text-align:center;">No nominees yet.</p>';
-            document.getElementById('counter').innerHTML = '';
-            document.getElementById('dashboard').classList.add('hidden');
-            document.getElementById('voteArea').classList.add('hidden');
-            document.getElementById('resultsContainer').innerHTML = '<p>No votes cast yet.</p>';
-            currentMember = null;
-            document.getElementById('memberStatus').innerHTML = '<span class="member-badge">🔒 Not logged in</span>';
-            document.getElementById('memberSelect').value = '';
-            document.getElementById('committeeTools').classList.add('hidden');
-            document.getElementById('resultsCard').classList.add('hidden');
-            alert('✅ ALL DATA CLEARED! Refresh the page and log in again.');
-            setTimeout(() => location.reload(), 300);
-        }
-    }
+<!-- CANDIDATE ENTRY (chair only) -->
+<div class="card hidden" id="entryCard">
+    <h2>Candidates</h2>
 
-    function login() {
-        const selected = document.getElementById('memberSelect').value;
-        if (!selected) { alert('Please select a committee member'); return; }
-        currentMember = selected;
-        
-        const statusDiv = document.getElementById('memberStatus');
-        if (currentMember === 'chairperson') {
-            statusDiv.innerHTML = '<span class="member-badge">👑 Chairperson (can view results)</span>';
-            document.getElementById('committeeTools').classList.remove('hidden');
-            document.getElementById('resultsCard').classList.remove('hidden');
-            displayResults();
-            enableVoteButtons(false);
-        } else {
-            const memberVoteKey = `voted_${currentMember}`;
-            const hasVoted = localStorage.getItem(memberVoteKey) !== null;
-            
-            if (hasVoted) {
-                statusDiv.innerHTML = `<span class="member-badge">👤 ${currentMember} – already voted ✅</span>`;
-                document.getElementById('committeeTools').classList.remove('hidden');
-                document.getElementById('resultsCard').classList.add('hidden');
-                document.getElementById('voteResult').innerHTML = `<div style="color:#f59e0b; background:#fef3c7; padding:12px; border-radius:8px;">⚠️ ${currentMember}, you have already voted. Thank you.</div>`;
-                enableVoteButtons(false);
-            } else {
-                statusDiv.innerHTML = `<span class="member-badge">👤 ${currentMember} – ready to vote</span>`;
-                document.getElementById('committeeTools').classList.remove('hidden');
-                document.getElementById('resultsCard').classList.add('hidden');
-                document.getElementById('voteResult').innerHTML = '';
-                enableVoteButtons(true);
-            }
-        }
-        loadCandidates();
-        if (candidates.length > 0) analyzeBias(true);
-    }
-    
-    function enableVoteButtons(enabled) {
-        const buttons = document.querySelectorAll('.vote-btn');
-        buttons.forEach(btn => {
-            btn.disabled = !enabled;
-        });
-    }
-    
-    function loadCandidates() {
-        const saved = localStorage.getItem('equityLens_candidates_' + sessionId);
-        if (saved) {
-            candidates = JSON.parse(saved);
-            updateDisplay();
-            if (candidates.length > 0 && currentDashboard) renderDashboard(true);
-        }
-    }
+    <div class="section">
+        <div class="section-title">Candidate info</div>
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="candidateName">Name<span class="required-star">*</span></label>
+                <input type="text" id="candidateName" placeholder="Dr. Anna Schmidt">
+            </div>
+            <div class="form-field">
+                <label for="careerStage">Career stage<span class="required-star">*</span></label>
+                <select id="careerStage">
+                    <option value="">Select one</option>
+                    <option>PhD candidate</option>
+                    <option>Postdoc</option>
+                    <option>Junior faculty</option>
+                    <option>Senior faculty</option>
+                    <option>Emeritus</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="institution">Institution<span class="required-star">*</span></label>
+                <input type="text" id="institution" placeholder="TU Berlin">
+            </div>
+            <div class="form-field">
+                <label for="gender">Gender<span class="required-star">*</span></label>
+                <select id="gender">
+                    <option value="">Select one</option>
+                    <option value="female">Woman</option>
+                    <option value="male">Man</option>
+                    <option value="other">Other / non-binary</option>
+                </select>
+                <div class="helper">Used only to compute the gender balance flag.</div>
+            </div>
+        </div>
+    </div>
 
-    function saveCandidates() {
-        localStorage.setItem('equityLens_candidates_' + sessionId, JSON.stringify(candidates));
-    }
+    <div class="section">
+        <div class="section-title">Academic impact</div>
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="hindex">h-index<span class="required-star">*</span></label>
+                <div class="flex-row">
+                    <input type="number" id="hindex" min="0" value="0" style="flex:1;">
+                    <button type="button" class="outline" id="btnScopus">Look up</button>
+                </div>
+                <div class="info-box">h-index = h papers with at least h citations each.</div>
+            </div>
+            <div class="form-field">
+                <label for="firstPubYear">Year of first publication<span class="required-star">*</span></label>
+                <input type="number" id="firstPubYear" min="1950" value="2020">
+            </div>
+            <div class="form-field">
+                <label for="priorInvites">Prior invitations (last 3 years)<span class="required-star">*</span></label>
+                <input type="number" id="priorInvites" min="0" value="0">
+            </div>
+        </div>
+        <div class="mq-display" id="mqDisplay">m-quotient = —</div>
+        <div class="form-field" style="margin-top:16px;">
+            <label for="keyPubs">Key publications (max 3, one per line)</label>
+            <textarea id="keyPubs" rows="2" placeholder="Title, Journal, Year"></textarea>
+        </div>
+    </div>
 
-    function calculateMQuotient(hindex, firstPubYear, currentYear = 2026) {
-        if (!hindex || hindex <= 0 || !firstPubYear || firstPubYear > currentYear) return null;
-        const yearsActive = currentYear - firstPubYear;
-        if (yearsActive <= 0) return null;
-        return (hindex / yearsActive).toFixed(2);
-    }
+    <div class="section">
+        <div class="section-title">Impact beyond citations</div>
+        <div class="checkbox-group" id="impactCheckboxes">
+            <label><input type="checkbox" value="patent"> Patent / technology transfer</label>
+            <label><input type="checkbox" value="policy"> Policy citation</label>
+            <label><input type="checkbox" value="media"> Major media coverage</label>
+            <label><input type="checkbox" value="award"> Major award / prize</label>
+        </div>
+    </div>
 
-    function updateMQDisplay() {
-        const hindex = parseInt(document.getElementById('hindex').value) || 0;
-        const firstPubYear = parseInt(document.getElementById('firstPubYear').value) || null;
-        const mq = calculateMQuotient(hindex, firstPubYear);
-        const displayDiv = document.getElementById('mqDisplay');
-        
-        if (mq && mq > 0 && firstPubYear && firstPubYear <= 2026) {
-            const yearsActive = 2026 - firstPubYear;
-            displayDiv.innerHTML = `📈 <strong>m-quotient = ${mq}</strong> (${hindex} ÷ ${yearsActive} years) ${parseFloat(mq) >= 1.0 ? '✅ Excellent for career stage' : '📈 Good for career stage'}`;
-            displayDiv.style.background = '#d1fae5';
-            displayDiv.style.color = '#065f46';
-        } else {
-            displayDiv.innerHTML = `📈 m-quotient = — (enter h-index and first publication year)`;
-            displayDiv.style.background = '#eff6ff';
-            displayDiv.style.color = '#1e40af';
-        }
-    }
+    <div class="section">
+        <div class="section-title">Career stage considerations</div>
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="parentalLeaveCheckbox"> Parental leave over 6 months</label>
+            <label><input type="checkbox" id="careerBreakCheckbox"> Interruption for illness or caregiving</label>
+            <label><input type="checkbox" id="nonTraditionalCheckbox"> Non-traditional career path</label>
+        </div>
+        <div class="helper" style="margin-top:8px;">These contextualise productivity fairly.</div>
+    </div>
 
-    function openScopusSearch() {
-        const name = document.getElementById('candidateName').value.trim();
-        if (!name) { alert('Enter candidate name first'); return; }
-        window.open(`https://www.scopus.com/search/form.uri?display=authorLookup&searchterm1=${encodeURIComponent(name)}`, '_blank');
-    }
+    <button id="btnAddCandidate">Add candidate</button>
+    <div id="entryMsg"></div>
+    <div id="candidateList" style="margin-top:20px;"></div>
+</div>
 
-    function clearFieldErrors() {
-        document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
-    }
+<!-- BIAS DASHBOARD -->
+<div class="card hidden" id="dashboardCard">
+    <h2>Bias check</h2>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div id="flagsContainer"></div>
+    <div id="candidatesDetail"></div>
+    <div class="info-box" style="margin-top:16px;">
+        This tool does not rank candidates or recommend an outcome. It makes patterns
+        visible so the committee can apply its own judgement.
+    </div>
+</div>
 
-    function addCandidate() {
-        clearFieldErrors();
-        
-        const name = document.getElementById('candidateName').value.trim();
-        const careerStage = document.getElementById('careerStage').value;
-        const institutionRaw = document.getElementById('institution').value.trim();
-        const institution = institutionRaw || 'Other';
-        const gender = document.getElementById('gender').value;
-        const hindex = parseInt(document.getElementById('hindex').value) || 0;
-        const firstPubYear = parseInt(document.getElementById('firstPubYear').value) || null;
-        const priorInvites = document.getElementById('priorInvites').value;
-        const keyPubs = document.getElementById('keyPubs').value;
-        
-        let isValid = true;
-        if (!name) { document.getElementById('candidateName').classList.add('error-border'); isValid = false; }
-        if (!careerStage) { document.getElementById('careerStage').classList.add('error-border'); isValid = false; }
-        if (!institutionRaw) { document.getElementById('institution').classList.add('error-border'); isValid = false; }
-        if (!gender) { document.getElementById('gender').classList.add('error-border'); isValid = false; }
-        if (priorInvites === '' || priorInvites === null) { document.getElementById('priorInvites').classList.add('error-border'); isValid = false; }
-        
-        if (!isValid) {
-            alert('❌ Please fill in all required fields (marked with *):\n- Candidate Name\n- Career Stage\n- Institution\n- Gender\n- Prior invitations');
-            return;
-        }
-        
-        const impactFactors = [];
-        document.querySelectorAll('#impactCheckboxes input[type="checkbox"]:checked').forEach(cb => {
-            if (cb.value) impactFactors.push(cb.value);
-        });
-        
-        const parentalLeave = document.getElementById('parentalLeaveCheckbox').checked;
-        const careerBreak = document.getElementById('careerBreakCheckbox').checked;
-        const nonTraditional = document.getElementById('nonTraditionalCheckbox').checked;
-        
-        const mq = calculateMQuotient(hindex, firstPubYear);
-        const yearsActive = firstPubYear ? (2026 - firstPubYear) : null;
-        
-        candidates.push({
-            id: Date.now(),
-            name, careerStage, institution: institution,
-            institutionNormalized: normalizeInstitution(institution),
-            gender, hindex,
-            firstPubYear, yearsActive, mquotient: mq ? parseFloat(mq) : null,
-            priorInvitations: parseInt(priorInvites) || 0, keyPubs, impactFactors,
-            careerConsiderations: { parentalLeave, careerBreak, nonTraditional }
-        });
-        
-        // Clear form
-        document.getElementById('candidateName').value = '';
-        document.getElementById('careerStage').value = '';
-        document.getElementById('institution').value = '';
-        document.getElementById('gender').value = '';
-        document.getElementById('priorInvites').value = '0';
-        document.getElementById('keyPubs').value = '';
-        document.querySelectorAll('#impactCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
-        document.getElementById('parentalLeaveCheckbox').checked = false;
-        document.getElementById('careerBreakCheckbox').checked = false;
-        document.getElementById('nonTraditionalCheckbox').checked = false;
-        document.getElementById('hindex').value = '0';
-        document.getElementById('firstPubYear').value = '2020';
-        updateMQDisplay();
-        
-        saveCandidates();
-        updateDisplay();
+<!-- PUBLISH (chair) -->
+<div class="card hidden" id="publishCard">
+    <h2>Open the vote</h2>
+    <p style="font-size:14px;color:#4b5563;">
+        Publishing encrypts the candidate list in this browser and sends it to members'
+        devices. The server stores only ciphertext and cannot read it.
+    </p>
+    <div class="section" style="margin-top:16px;">
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="blindMode"> Double-blind: hide names and gender from members</label>
+        </div>
+        <div class="helper" style="margin-top:8px;">
+            Candidates appear as "Candidate 1", "Candidate 2" in a shuffled order, and key
+            publications are withheld since a title identifies the author. Institution,
+            career stage and metrics stay visible. You still see everything, so this reduces
+            bias among the other members, not your own. Decide before publishing.
+        </div>
+    </div>
+    <button class="secondary" id="btnPublish" style="margin-top:12px;">Publish list and open voting</button>
+    <div id="publishMsg"></div>
+</div>
+
+<!-- VOTING (member) -->
+<div class="card hidden" id="voteCard">
+    <h2>Cast your ballot</h2>
+    <p style="font-size:14px;color:#4b5563;margin-bottom:12px;">
+        Your ballot is counted but not recorded against your name. No one, including
+        the chair, can see how you voted.
+    </p>
+    <div id="voteButtons" class="flex-row"></div>
+    <div id="voteMsg"></div>
+</div>
+
+<!-- BALLOT STATUS + RESULTS (chair) -->
+<div class="card hidden" id="resultsCard">
+    <h2>Ballot box</h2>
+    <div class="seal-status" id="sealStatus">Checking…</div>
+    <div id="resultsContainer" style="margin-top:16px;"></div>
+    <div class="flex-row" style="margin-top:16px;">
+        <button class="outline" id="btnRefresh">Refresh</button>
+        <button class="outline" id="btnExport">Export anonymised session</button>
+        <button class="danger" id="btnErase">Delete all session data</button>
+    </div>
+    <div id="resultsMsg"></div>
+</div>
+
+<!-- LIMITATIONS (R5.3) -->
+<div class="card">
+    <h2>What this tool does not do</h2>
+    <ul style="font-size:14px;color:#4b5563;padding-left:20px;">
+        <li>It does not detect bias it has not been told to look for, including racial, disability and socioeconomic bias.</li>
+        <li>It cannot verify the data entered. A wrong h-index produces a confident wrong flag.</li>
+        <li>Gender is recorded as entered by the chair, not as self-identified by the candidate.</li>
+        <li>Double-blind mode hides names and gender from members, but a career stage, an institution and an h-index may still identify someone in a small field. It reduces bias; it does not guarantee anonymity. The chair is never blind.</li>
+        <li>It has no memory across sessions, so it cannot yet show your committee's patterns over time.</li>
+        <li>The chair knows which seat link went to which person, but never learns which ballot came from which seat.</li>
+    </ul>
+</div>
+
+<footer>
+    Working Group on Equal Opportunities of the German Physical Society (DPG-AKC)<br>
+    A speedometer, not a speed limit.
+</footer>
+</div>
+
+<script type="module">
+import { BallotBox } from './ballot-box.js';
+
+const CURRENT_YEAR = new Date().getFullYear();
+const $ = (id) => document.getElementById(id);
+let candidates = [];
+let dashboard = null;
+
+function show(id, on = true) { $(id).classList.toggle('hidden', !on); }
+function message(id, text, kind = 'ok') {
+    $(id).innerHTML = text ? `<div class="msg ${kind}">${escapeHtml(text)}</div>` : '';
+}
+function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (m) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+function normalizeInstitution(inst) {
+    return inst ? inst.trim().toLowerCase().replace(/\s+/g, ' ') : 'other';
+}
+function newId() {
+    return 'c' + Math.random().toString(36).slice(2, 10);
+}
+
+// The chair's working state survives a reload. sessionStorage is per-tab and is
+// cleared when the tab closes, so nothing outlives the meeting.
+const DRAFT = { candidates: 'equityLens.draftCandidates', links: 'equityLens.seatLinks' };
+
+function saveDraft() {
+    try {
+        sessionStorage.setItem(DRAFT.candidates, JSON.stringify(candidates));
+    } catch (e) { /* storage unavailable; the session still works, just not across reloads */ }
+}
+
+function loadDraft() {
+    try {
+        candidates = JSON.parse(sessionStorage.getItem(DRAFT.candidates)) || [];
+    } catch (e) { candidates = []; }
+}
+
+function showChairView(seatLinks) {
+    if (seatLinks && seatLinks.length) {
+        $('seatLinksList').innerHTML = seatLinks
+            .map((l, i) => `<div class="seat-link">Seat ${i + 1}: ${escapeHtml(l)}</div>`).join('');
+        $('btnCopyLinks').dataset.links = seatLinks.join('\n');
+        show('seatLinksCard', true);
     }
-    
-    function updateDisplay() {
-        const container = document.getElementById('candidateList');
-        const counter = document.getElementById('counter');
-        if (candidates.length === 0) {
-            container.innerHTML = '<p style="color:#9ca3af;text-align:center;">No nominees yet.</p>';
-            counter.innerHTML = '';
-            return;
-        }
-        counter.innerHTML = `📋 Total nominees: ${candidates.length}`;
-        container.innerHTML = candidates.map((c, idx) => `
+    show('rolePicker', false);
+    show('entryCard', true);
+    show('publishCard', true);
+    show('resultsCard', true);
+    renderCandidates();
+    analyzeBias();
+    refreshResults();
+}
+
+// --- m-quotient -------------------------------------------------------------
+function mQuotient(hindex, firstPubYear) {
+    if (!hindex || hindex <= 0 || !firstPubYear || firstPubYear > CURRENT_YEAR) return null;
+    const years = CURRENT_YEAR - firstPubYear;
+    if (years <= 0) return null;
+    return parseFloat((hindex / years).toFixed(2));
+}
+
+function updateMQDisplay() {
+    const h = parseInt($('hindex').value, 10) || 0;
+    const y = parseInt($('firstPubYear').value, 10) || null;
+    const mq = mQuotient(h, y);
+    $('mqDisplay').textContent = mq
+        ? `m-quotient = ${mq}  (${h} ÷ ${CURRENT_YEAR - y} years)`
+        : 'm-quotient = — (enter h-index and first publication year)';
+}
+
+// --- candidate entry --------------------------------------------------------
+function addCandidate() {
+    document.querySelectorAll('.error-border').forEach((el) => el.classList.remove('error-border'));
+    const fields = {
+        name: $('candidateName').value.trim(),
+        careerStage: $('careerStage').value,
+        institution: $('institution').value.trim(),
+        gender: $('gender').value,
+    };
+    let valid = true;
+    const map = { name: 'candidateName', careerStage: 'careerStage', institution: 'institution', gender: 'gender' };
+    for (const [k, v] of Object.entries(fields)) {
+        if (!v) { $(map[k]).classList.add('error-border'); valid = false; }
+    }
+    if (!valid) { message('entryMsg', 'Fill in every field marked with a star.', 'err'); return; }
+
+    const hindex = parseInt($('hindex').value, 10) || 0;
+    const firstPubYear = parseInt($('firstPubYear').value, 10) || null;
+    const impactFactors = [...document.querySelectorAll('#impactCheckboxes input:checked')].map((cb) => cb.value);
+
+    candidates.push({
+        id: newId(),
+        ...fields,
+        institutionNormalized: normalizeInstitution(fields.institution),
+        hindex,
+        firstPubYear,
+        yearsActive: firstPubYear ? CURRENT_YEAR - firstPubYear : null,
+        mquotient: mQuotient(hindex, firstPubYear),
+        priorInvitations: parseInt($('priorInvites').value, 10) || 0,
+        keyPubs: $('keyPubs').value,
+        impactFactors,
+        careerConsiderations: {
+            parentalLeave: $('parentalLeaveCheckbox').checked,
+            careerBreak: $('careerBreakCheckbox').checked,
+            nonTraditional: $('nonTraditionalCheckbox').checked,
+        },
+    });
+
+    ['candidateName', 'institution', 'keyPubs'].forEach((id) => ($(id).value = ''));
+    ['careerStage', 'gender'].forEach((id) => ($(id).value = ''));
+    $('hindex').value = '0';
+    $('firstPubYear').value = '2020';
+    $('priorInvites').value = '0';
+    document.querySelectorAll('#impactCheckboxes input, #parentalLeaveCheckbox, #careerBreakCheckbox, #nonTraditionalCheckbox')
+        .forEach((cb) => (cb.checked = false));
+    updateMQDisplay();
+    message('entryMsg', '');
+    saveDraft();
+    renderCandidates();
+    analyzeBias();
+}
+
+function renderCandidates() {
+    const genderMark = { female: 'woman', male: 'man', other: 'other' };
+    $('candidateList').innerHTML = candidates.length === 0
+        ? '<p style="color:#9ca3af;text-align:center;">No candidates yet.</p>'
+        : `<p style="font-size:13px;color:#6b7280;margin-bottom:10px;">${candidates.length} candidate(s)</p>` +
+          candidates.map((c) => `
             <div class="candidate-item">
-                <span><strong>${escapeHtml(c.name)}</strong> (${c.careerStage}) | 🏛️ ${escapeHtml(c.institution)} | ${c.gender === 'female' ? '♀' : c.gender === 'male' ? '♂' : '⚧'}</span>
-                <span class="badge">h=${c.hindex}</span>
-                <span class="badge ${c.mquotient && c.mquotient >= 1.0 ? 'badge-green' : ''}">mq=${c.mquotient ?? '?'}</span>
-                <span class="badge">🔁 ${c.priorInvitations} invites</span>
-                <button class="danger small" onclick="removeCandidate(${idx})">Remove</button>
-            </div>
-        `).join('');
-        document.getElementById('dashboard').classList.add('hidden');
-        document.getElementById('voteArea').classList.add('hidden');
+                <span><strong>${escapeHtml(c.name)}</strong> (${escapeHtml(c.careerStage)}) — ${escapeHtml(c.institution)}, ${genderMark[c.gender]}</span>
+                <span class="badge">h = ${c.hindex}</span>
+                <span class="badge ${c.mquotient >= 1 ? 'badge-green' : ''}">mq = ${c.mquotient ?? '?'}</span>
+                <span class="badge">${c.priorInvitations} prior invitations</span>
+                <button class="danger small" data-remove="${c.id}">Remove</button>
+                ${c.keyPubs && c.keyPubs.trim() ? `<div style="flex-basis:100%;font-size:12px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px;margin-top:4px;white-space:pre-line;">${escapeHtml(c.keyPubs.trim())}</div>` : ''}
+            </div>`).join('');
+}
+
+// --- bias engine (unchanged logic, thresholds now match the specification) ---
+function computeDashboard(candidates) {
+    const flags = [];
+
+    candidates.forEach((c) => {
+        if (c.priorInvitations >= 2) {
+            flags.push({ severity: 'medium', type: 'Familiarity bias',
+                message: `${c.name} has been invited ${c.priorInvitations} times in three years.`,
+                suggestion: 'Consider whether newer voices were considered.' });
+        }
+    });
+
+    const instCounts = {};
+    candidates.forEach((c) => {
+        instCounts[c.institutionNormalized] = (instCounts[c.institutionNormalized] || 0) + 1;
+    });
+    const topCount = Math.max(...Object.values(instCounts));
+    const topInsts = Object.keys(instCounts).filter((i) => instCounts[i] === topCount);
+    const topNames = topInsts.map((i) => candidates.find((c) => c.institutionNormalized === i).institution);
+    const share = topCount / candidates.length;
+
+    // Below three candidates a share of the pool carries no information: with two
+    // people any split is 50/50 or 100/0. So only the unambiguous case counts —
+    // everyone from the same institution.
+    const concentrated = candidates.length >= 3
+        ? share >= 0.4
+        : Object.keys(instCounts).length === 1;
+
+    if (concentrated) {
+        flags.push({ severity: 'low', type: 'Institutional concentration',
+            message: topNames.length === 1
+                ? `${Math.round(share * 100)}% of candidates come from ${topNames[0]}.`
+                : `${Math.round(share * 100)}% each from ${topNames.join(' and ')}.`,
+            suggestion: 'Consider whether institutional diversity matters here.' });
     }
-    
-    function removeCandidate(idx) {
-        candidates.splice(idx, 1);
-        saveCandidates();
-        updateDisplay();
+
+    const withMQ = candidates.filter((c) => c.mquotient !== null);
+    if (withMQ.length >= 2) {
+        const best = withMQ.reduce((a, b) => (b.mquotient > a.mquotient ? b : a));
+        const maxH = Math.max(...candidates.map((c) => c.hindex));
+        if (best.hindex < maxH) {
+            flags.push({ severity: 'low', type: 'Career-stage productivity',
+                message: `${best.name} has the highest m-quotient (${best.mquotient}) despite a lower h-index.`,
+                suggestion: 'Compare m-quotient alongside raw h-index across career stages.' });
+        }
     }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+
+    const interrupted = candidates.filter((c) => c.careerConsiderations.parentalLeave || c.careerConsiderations.careerBreak);
+    if (interrupted.length > 0) {
+        flags.push({ severity: 'low', type: 'Career interruptions noted',
+            message: `${interrupted.length} candidate(s) had a recorded career interruption.`,
+            suggestion: 'Check that output is judged against active years, not calendar years.' });
     }
-    
-    function analyzeBias(silent = false) {
-        if (candidates.length < 2 && !silent) {
-            alert('Add at least 2 candidates');
-            return;
+
+    const women = candidates.filter((c) => c.gender === 'female').length;
+    const men = candidates.filter((c) => c.gender === 'male').length;
+    const total = women + men;
+    if (total >= 2) {
+        if (women === 0) {
+            flags.push({ severity: 'high', type: 'Gender balance',
+                message: `No women among ${total} candidates.`,
+                suggestion: 'Review whether the nomination process reached qualified women.' });
+        } else if (men === 0) {
+            flags.push({ severity: 'high', type: 'Gender balance',
+                message: `No men among ${total} candidates.`,
+                suggestion: 'Review whether the nomination process reached qualified men.' });
+        } else if (Math.min(women, men) < total * 0.25) {
+            const minority = women < men ? 'women' : 'men';
+            flags.push({ severity: 'high', type: 'Gender balance',
+                message: `Only ${Math.round((Math.min(women, men) / total) * 100)}% of candidates are ${minority}.`,
+                suggestion: 'Compare this against the gender distribution of the field.' });
         }
-        
-        const flags = [];
-        
-        // Familiarity bias
-        candidates.forEach(c => {
-            if (c.priorInvitations >= 3) {
-                flags.push({ severity: 'medium', type: '🔁 Familiarity Bias', message: `${c.name} invited ${c.priorInvitations}x in 3 years`, suggestion: 'Consider new voices.' });
-            }
-        });
-        
-        // Institutional concentration - CASE INSENSITIVE
-        const instCounts = {};
-        candidates.forEach(c => {
-            const normInst = c.institutionNormalized || normalizeInstitution(c.institution);
-            instCounts[normInst] = (instCounts[normInst] || 0) + 1;
-        });
-        
-        let maxInstCount = 0;
-        let maxInstNormalized = '';
-        for (const [inst, count] of Object.entries(instCounts)) {
-            if (count > maxInstCount) {
-                maxInstCount = count;
-                maxInstNormalized = inst;
-            }
-        }
-        
-        let displayInstName = maxInstNormalized;
-        const candidateWithMaxInst = candidates.find(c => (c.institutionNormalized || normalizeInstitution(c.institution)) === maxInstNormalized);
-        if (candidateWithMaxInst) {
-            displayInstName = candidateWithMaxInst.institution;
-        }
-        
-        if (maxInstCount / candidates.length >= 0.4) {
-            flags.push({ severity: 'low', type: '🏛️ Institutional Concentration', message: `${Math.round(maxInstCount/candidates.length*100)}% of nominees are from "${displayInstName}"`, suggestion: 'Consider whether institutional diversity matters for this event.' });
-        }
-        
-        // Career-stage productivity
-        const validMQ = candidates.filter(c => c.mquotient !== null);
-        if (validMQ.length >= 2) {
-            const maxMQ = Math.max(...validMQ.map(c => c.mquotient));
-            const maxMQcandidate = validMQ.find(c => c.mquotient === maxMQ);
-            if (maxMQcandidate && maxMQcandidate.hindex < Math.max(...candidates.map(c => c.hindex))) {
-                flags.push({ severity: 'low', type: '📈 Career-Stage Productivity', message: `${maxMQcandidate.name} has the highest m-quotient (${maxMQcandidate.mquotient}) despite lower h-index`, suggestion: 'Consider m-quotient alongside raw h-index for fair career-stage comparison.' });
-            }
-        }
-        
-        // Career considerations
-        const withConsiderations = candidates.filter(c => c.careerConsiderations.parentalLeave || c.careerConsiderations.careerBreak);
-        if (withConsiderations.length > 0) {
-            let text = '';
-            if (withConsiderations.some(c => c.careerConsiderations.parentalLeave)) text += 'parental leave (>6 months) ';
-            if (withConsiderations.some(c => c.careerConsiderations.careerBreak)) text += 'career break due to illness/caregiving';
-            flags.push({ severity: 'low', type: '👶 Career Stage Considerations', message: `${withConsiderations.length} candidate(s) noted: ${text}`, suggestion: 'Ensure productivity is assessed fairly considering career interruptions.' });
-        }
-        
-        // Gender disparity
-        const womenCount = candidates.filter(c => c.gender === 'female').length;
-        const menCount = candidates.filter(c => c.gender === 'male').length;
-        const totalWithGender = womenCount + menCount;
-        
-        if (totalWithGender >= 2) {
-            if (womenCount === 0 && menCount > 0) {
-                flags.push({ severity: 'high', type: '⚧ Gender Disparity', message: `No women among ${totalWithGender} nominees (all ${menCount} are men)`, suggestion: 'Review whether the nomination process is attracting qualified women candidates.' });
-            } else if (menCount === 0 && womenCount > 0) {
-                flags.push({ severity: 'high', type: '⚧ Gender Disparity', message: `No men among ${totalWithGender} nominees (all ${womenCount} are women)`, suggestion: 'Review whether the nomination process is attracting qualified men candidates.' });
-            } else if (womenCount > 0 && womenCount < totalWithGender * 0.25) {
-                flags.push({ severity: 'high', type: '⚧ Gender Disparity', message: `Only ${womenCount} woman/women among ${totalWithGender} nominees (${Math.round(womenCount/totalWithGender*100)}%)`, suggestion: 'Review whether the candidate pool reflects gender diversity in the field.' });
-            } else if (menCount > 0 && menCount < totalWithGender * 0.25) {
-                flags.push({ severity: 'high', type: '⚧ Gender Disparity', message: `Only ${menCount} man/men among ${totalWithGender} nominees (${Math.round(menCount/totalWithGender*100)}%)`, suggestion: 'Review whether the candidate pool reflects gender diversity in the field.' });
-            }
-        }
-        
-        currentDashboard = { total: candidates.length, women: womenCount, men: menCount, other: candidates.filter(c => c.gender === 'other').length, flags, institutions: Object.keys(instCounts).length, candidates: candidates };
-        renderDashboard(silent);
-        document.getElementById('dashboard').classList.remove('hidden');
     }
-    
-    function renderDashboard(silent = false) {
-        const d = currentDashboard;
-        document.getElementById('statsGrid').innerHTML = `
-            <div class="stat-card"><div class="stat-number">${d.total}</div><div class="stat-label">Nominees</div></div>
-            <div class="stat-card"><div class="stat-number">${d.women}/${d.men}</div><div class="stat-label">Women / Men</div></div>
-            <div class="stat-card"><div class="stat-number">${d.institutions}</div><div class="stat-label">Institutions</div></div>
-            <div class="stat-card"><div class="stat-number">${d.candidates.filter(c => c.mquotient && c.mquotient >= 1.0).length}</div><div class="stat-label">mq ≥ 1.0</div></div>
-        `;
-        
-        document.getElementById('flagsContainer').innerHTML = d.flags.length === 0 ? 
-            '<div style="background:#f0fdf4;padding:16px;border-radius:12px;">✅ No significant bias patterns detected.</div>' :
-            `<h3>⚠️ Detected Bias Patterns</h3>` + d.flags.map(f => `<div class="flag ${f.severity}"><strong>${f.type}</strong><br>${f.message}<br><span style="font-size:13px;">💡 ${f.suggestion}</span></div>`).join('');
-        
-        document.getElementById('candidatesDetail').innerHTML = `
-            <h3>📋 Candidate Details</h3>
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse: collapse; font-size:13px;">
-                    <tr style="background:#f3f4f6;">
-                        <th style="padding:8px;">Name</th><th style="padding:8px;">Career</th><th style="padding:8px;">Institution</th>
-                        <th style="padding:8px;">h</th><th style="padding:8px;">Yrs</th><th style="padding:8px;">mq</th>
-                        <th style="padding:8px;">Impact</th><th style="padding:8px;">Considerations</th>
-                      </tr>
-                    ${d.candidates.map(c => `
-                        <tr style="border-bottom:1px solid #e5e7eb;">
-                            <td style="padding:8px;"><strong>${escapeHtml(c.name)}</strong> (${c.gender === 'female' ? '♀' : c.gender === 'male' ? '♂' : '⚧'})</span></td>
-                            <td style="padding:8px;">${c.careerStage}</td>
-                            <td style="padding:8px;">${escapeHtml(c.institution)}</span></td>
-                            <td style="padding:8px; text-align:center;">${c.hindex}</td>
-                            <td style="padding:8px; text-align:center;">${c.yearsActive ?? '?'}</td>
-                            <td style="padding:8px; text-align:center; ${c.mquotient && c.mquotient >= 1.0 ? 'background:#d1fae5;font-weight:bold;' : ''}">${c.mquotient ?? 'n/a'}</td>
-                            <td style="padding:8px;">${c.impactFactors.length > 0 ? c.impactFactors.join(', ') : '—'}</td>
-                            <td style="padding:8px;">${c.careerConsiderations.parentalLeave ? '👶 Parental leave >6m ' : ''}${c.careerConsiderations.careerBreak ? '⏸️ Illness/caregiving ' : ''}${c.careerConsiderations.nonTraditional ? '🔄 Non-trad path' : ''}</span></td>
-                         </tr>
-                    `).join('')}
-                </table>
-            </div>
-            <div class="info-box" style="margin-top:12px;">📖 m-quotient > 1.0 = excellent career-stage productivity. Institutions are case-insensitive (e.g., "TU Berlin" = "tu berlin").</div>
-        `;
-        
-        // Generate vote buttons with proper onclick handlers
-        const voteContainer = document.getElementById('voteButtonsContainer');
-        if (voteContainer) {
-            voteContainer.innerHTML = '';
-            d.candidates.forEach(c => {
-                const btn = document.createElement('button');
-                btn.className = 'vote-btn';
-                btn.innerHTML = `🗳️ Vote for ${escapeHtml(c.name)}`;
-                btn.onclick = function() { castVote(escapeHtml(c.name)); };
-                voteContainer.appendChild(btn);
-            });
-        }
-        
-        // Update vote button enabled/disabled state
-        if (currentMember && currentMember !== 'chairperson') {
-            const hasVoted = localStorage.getItem(`voted_${currentMember}`) !== null;
-            enableVoteButtons(!hasVoted);
-        } else if (currentMember === 'chairperson') {
-            enableVoteButtons(false);
+
+    return { total: candidates.length, women, men, institutions: Object.keys(instCounts).length, flags };
+}
+
+function analyzeBias() {
+    if (candidates.length < 2) { show('dashboardCard', false); return; }
+    dashboard = computeDashboard(candidates);
+    renderDashboard();
+    show('dashboardCard', true);
+}
+
+// Masking happens here, in the chair's browser, before anything is encrypted.
+// The hidden fields never leave this machine, so there is nothing for a member
+// to uncover in developer tools.
+function maskCandidates(list) {
+    const shuffled = [...list];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.map((c, i) => ({
+        ...c,
+        name: `Candidate ${i + 1}`,
+        keyPubs: '',
+    }));
+}
+
+function renderDashboard() {
+    const d = dashboard;
+    $('statsGrid').innerHTML = `
+        <div class="stat-card"><div class="stat-number">${d.total}</div><div class="stat-label">Candidates</div></div>
+        <div class="stat-card"><div class="stat-number">${d.women} / ${d.men}</div><div class="stat-label">Women / men</div></div>
+        <div class="stat-card"><div class="stat-number">${d.institutions}</div><div class="stat-label">Institutions</div></div>
+        <div class="stat-card"><div class="stat-number">${candidates.filter((c) => c.mquotient >= 1).length}</div><div class="stat-label">m-quotient ≥ 1.0</div></div>`;
+
+    $('flagsContainer').innerHTML = d.flags.length === 0
+        ? '<div style="background:#f0fdf4;padding:16px;border-radius:12px;">No flags raised by the checks that are switched on.</div>'
+        : '<h3>Patterns worth a second look</h3>' + d.flags.map((f) => `
+            <div class="flag ${f.severity}">
+                <strong>${escapeHtml(f.type)}</strong><br>${escapeHtml(f.message)}<br>
+                <span style="font-size:13px;">${escapeHtml(f.suggestion)}</span>
+            </div>`).join('');
+
+    $('candidatesDetail').innerHTML = `
+        <h3>Candidate detail</h3>
+        <div style="overflow-x:auto;">
+        <table class="detail">
+            <tr><th>Name</th><th>Career stage</th><th>Institution</th><th>h</th><th>Years</th><th>mq</th><th>Impact</th><th>Considerations</th></tr>
+            ${candidates.map((c) => `
+                <tr>
+                    <td><strong>${escapeHtml(c.name)}</strong></td>
+                    <td>${escapeHtml(c.careerStage)}</td>
+                    <td>${escapeHtml(c.institution)}</td>
+                    <td>${c.hindex}</td>
+                    <td>${c.yearsActive ?? '?'}</td>
+                    <td${c.mquotient >= 1 ? ' style="background:#d1fae5;font-weight:bold;"' : ''}>${c.mquotient ?? 'n/a'}</td>
+                    <td>${c.impactFactors.join(', ') || '—'}</td>
+                    <td>${[
+                        c.careerConsiderations.parentalLeave ? 'parental leave' : '',
+                        c.careerConsiderations.careerBreak ? 'illness or caregiving' : '',
+                        c.careerConsiderations.nonTraditional ? 'non-traditional path' : '',
+                    ].filter(Boolean).join(', ') || '—'}</td>
+                </tr>`).join('')}
+        </table></div>`;
+}
+
+// --- voting -----------------------------------------------------------------
+function renderVoteButtons() {
+    $('voteButtons').innerHTML = '';
+    candidates.forEach((c) => {
+        const btn = document.createElement('button');
+        btn.textContent = `Vote for ${c.name}`;
+        btn.addEventListener('click', () => castBallot(c.id, c.name, btn));
+        $('voteButtons').appendChild(btn);
+    });
+}
+
+async function castBallot(candidateId, name, btn) {
+    document.querySelectorAll('#voteButtons button').forEach((b) => (b.disabled = true));
+    try {
+        const result = await BallotBox.castBallot(candidateId);
+        if (result.recorded) {
+            message('voteMsg', `Your ballot for ${name} has been counted. You can close this page.`, 'ok');
         } else {
-            enableVoteButtons(true);
+            message('voteMsg', 'This seat has already voted.', 'err');
         }
-        
-        document.getElementById('voteArea').classList.remove('hidden');
+        $('voteButtons').innerHTML = '';
+    } catch (err) {
+        message('voteMsg', err.message, 'err');
+        document.querySelectorAll('#voteButtons button').forEach((b) => (b.disabled = false));
     }
-    
-    function castVote(candidateName) {
-        if (!currentMember) {
-            alert('Please log in as a committee member first');
+}
+
+function lockPublishing(reason) {
+    $('btnPublish').disabled = true;
+    $('btnPublish').textContent = reason;
+    message('publishMsg', 'The candidate list is now frozen. Ballots already cast refer to it.', 'ok');
+}
+
+// --- chair results ----------------------------------------------------------
+async function refreshResults() {
+    try {
+        const data = await BallotBox.tally();
+        if (data.cast > 0) lockPublishing('Voting has started');
+        if (data.sealed) {
+            $('sealStatus').textContent =
+                `Sealed. ${data.cast} of ${data.quorum} ballots received. Results unlock when all are in.`;
+            $('resultsContainer').innerHTML = '';
             return;
         }
-        if (currentMember === 'chairperson') {
-            alert('Chairperson cannot vote. Please log in as a regular member (Member 1-5) to vote.');
-            return;
-        }
-        
-        const memberVoteKey = `voted_${currentMember}`;
-        
-        if (localStorage.getItem(memberVoteKey)) {
-            alert(`⚠️ ${currentMember}, you have already voted. Each member can vote only once.`);
-            return;
-        }
-        
-        // Record the vote
-        aggregatedVotes[candidateName] = (aggregatedVotes[candidateName] || 0) + 1;
-        
-        // Save to localStorage
-        localStorage.setItem('equityLens_votes_' + sessionId, JSON.stringify(aggregatedVotes));
-        localStorage.setItem(memberVoteKey, candidateName);
-        
-        // Show success message
-        const voteResultDiv = document.getElementById('voteResult');
-        if (voteResultDiv) {
-            voteResultDiv.innerHTML = `<div class="success-message">✓ ${currentMember}, your vote for "${candidateName}" has been recorded privately.<br><small>Thank you. You may now switch to a different member so the next person can vote.</small></div>`;
-        }
-        
-        // Disable vote buttons after voting
-        enableVoteButtons(false);
-        
-        // Update status display
-        const statusDiv = document.getElementById('memberStatus');
-        if (statusDiv) {
-            statusDiv.innerHTML = `<span class="member-badge">👤 ${currentMember} – voted ✅</span>`;
-        }
-        
-        // Refresh results if chairperson is viewing (though chairperson can't vote, but just in case)
-        if (currentMember === 'chairperson') {
-            displayResults();
-        }
-    }
-    
-    function displayResults() {
-        const container = document.getElementById('resultsContainer');
-        if (!container) return;
-        
-        if (Object.keys(aggregatedVotes).length === 0) {
-            container.innerHTML = '<p>No votes cast yet. Ask committee members to log in and vote.</p>';
-            return;
-        }
-        
-        const total = Object.values(aggregatedVotes).reduce((a,b) => a + b, 0);
-        const voters = Object.keys(localStorage).filter(k => k.startsWith('voted_')).length;
-        
-        container.innerHTML = `
-            <h3>📊 Vote Totals (Anonymous – No individual votes shown)</h3>
+        $('sealStatus').textContent = `All ${data.quorum} ballots received.`;
+        const total = data.results.reduce((sum, r) => sum + r.count, 0);
+        $('resultsContainer').innerHTML = `
             <table class="results-table">
                 <tr><th>Candidate</th><th>Votes</th><th>Share</th></tr>
-                ${Object.entries(aggregatedVotes).map(([name, count]) => `<tr><td><strong>${escapeHtml(name)}</strong></td><td class="vote-count">${count}</span></td><td>${Math.round(count/total*100)}%</span></td>`).join('')}
+                ${data.results.map((r) => {
+                    const c = candidates.find((x) => x.id === r.candidate_id);
+                    return `<tr><td>${escapeHtml(c ? c.name : r.candidate_id)}</td><td>${r.count}</td><td>${Math.round((r.count / total) * 100)}%</td></tr>`;
+                }).join('')}
             </table>
-            <div style="margin-top:16px;padding:12px;background:#f3f4f6;border-radius:8px;">
-                📌 Total votes cast: ${total} | Committee members who voted: ${voters}
-            </div>
             <div class="info-box" style="margin-top:12px;">
-                🔒 Individual member votes are never stored. Only aggregated totals are shown.<br>
-                💡 Each member can vote only once. The Chairperson can reset all votes for a new session.
-            </div>
-        `;
+                Totals only. The pairing between a member and a ballot was never stored,
+                so it cannot be recovered from these results.
+            </div>`;
+    } catch (err) {
+        message('resultsMsg', err.message, 'err');
     }
-    
-    function resetAllVotes() {
-        if (confirm('⚠️ Reset all votes? This will clear ALL votes cast in this session. Candidates will remain. This cannot be undone.')) {
-            aggregatedVotes = {};
-            localStorage.setItem('equityLens_votes_' + sessionId, JSON.stringify(aggregatedVotes));
-            
-            // Clear all member vote records
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('voted_')) {
-                    localStorage.removeItem(key);
-                }
-            });
-            
-            displayResults();
-            
-            if (currentMember && currentMember !== 'chairperson') {
-                const statusDiv = document.getElementById('memberStatus');
-                if (statusDiv) {
-                    statusDiv.innerHTML = `<span class="member-badge">👤 ${currentMember} – ready to vote (votes reset)</span>`;
-                }
-                enableVoteButtons(true);
-                const voteResultDiv = document.getElementById('voteResult');
-                if (voteResultDiv) voteResultDiv.innerHTML = '';
-                localStorage.removeItem(`voted_${currentMember}`);
+}
+
+function exportSession() {
+    const data = {
+        timestamp: new Date().toISOString(),
+        candidateCount: candidates.length,
+        genderBalance: { women: dashboard?.women ?? 0, men: dashboard?.men ?? 0 },
+        institutions: dashboard?.institutions ?? 0,
+        flags: (dashboard?.flags ?? []).map((f) => ({ type: f.type, severity: f.severity })),
+    };
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    a.download = `equity-lens-session-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// --- wiring -----------------------------------------------------------------
+$('hindex').addEventListener('input', updateMQDisplay);
+$('firstPubYear').addEventListener('input', updateMQDisplay);
+$('btnAddCandidate').addEventListener('click', addCandidate);
+$('candidateList').addEventListener('click', (e) => {
+    const id = e.target.dataset.remove;
+    if (!id) return;
+    candidates = candidates.filter((c) => c.id !== id);
+    saveDraft();
+    renderCandidates();
+    analyzeBias();
+});
+$('btnScopus').addEventListener('click', () => {
+    const name = $('candidateName').value.trim();
+    if (!name) { message('entryMsg', 'Enter a name first.', 'err'); return; }
+    window.open(`https://www.scopus.com/search/form.uri?display=authorLookup&searchterm1=${encodeURIComponent(name)}`, '_blank');
+});
+
+$('btnOpenSession').addEventListener('click', async () => {
+    const quorum = parseInt($('quorum').value, 10);
+    if (!Number.isInteger(quorum) || quorum < 2) {
+        message('roleMsg', 'Enter how many members will vote (at least 2).', 'err');
+        return;
+    }
+    $('btnOpenSession').disabled = true;
+    try {
+        const { seatLinks } = await BallotBox.openSession(quorum);
+        sessionStorage.setItem(DRAFT.links, JSON.stringify(seatLinks));
+        showChairView(seatLinks);
+    } catch (err) {
+        message('roleMsg', err.message, 'err');
+        $('btnOpenSession').disabled = false;
+    }
+});
+
+$('btnCopyLinks').addEventListener('click', (e) => {
+    navigator.clipboard.writeText(e.target.dataset.links || '');
+    e.target.textContent = 'Copied';
+});
+
+$('btnPublish').addEventListener('click', async () => {
+    if (candidates.length < 2) { message('publishMsg', 'Add at least two candidates first.', 'err'); return; }
+    const blinded = $('blindMode').checked;
+
+    // In blind mode the flags are computed from the masked list, so their text
+    // refers to "Candidate 2" rather than naming anyone.
+    const forMembers = blinded ? maskCandidates(candidates) : candidates;
+    const memberDashboard = computeDashboard(forMembers);
+    const payload = {
+        blinded,
+        dashboard: memberDashboard,
+        candidates: blinded
+            ? forMembers.map(({ gender, ...rest }) => rest)
+            : forMembers,
+    };
+
+    try {
+        await BallotBox.publishRoster(payload);
+        message('publishMsg', blinded
+            ? 'Published in double-blind mode. Members see candidates without names or gender. You can still correct the list until the first ballot arrives.'
+            : 'Published. Members can now vote from their own devices. You can still correct the list until the first ballot arrives.', 'ok');
+    } catch (err) {
+        message('publishMsg', err.message, 'err');
+    }
+    refreshResults();
+});
+
+$('btnRefresh').addEventListener('click', refreshResults);
+$('btnExport').addEventListener('click', exportSession);
+$('btnErase').addEventListener('click', async () => {
+    if (!confirm('Delete all ballots and the encrypted candidate list from the server? This cannot be undone.')) return;
+    await BallotBox.erase();
+    sessionStorage.removeItem(DRAFT.candidates);
+    sessionStorage.removeItem(DRAFT.links);
+    location.reload();
+});
+
+// --- startup ----------------------------------------------------------------
+(async function start() {
+    updateMQDisplay();
+
+    // Chair returning after a reload: session and key are still in this tab.
+    if (BallotBox.isChair()) {
+        loadDraft();
+        let seatLinks = [];
+        try { seatLinks = JSON.parse(sessionStorage.getItem(DRAFT.links)) || []; } catch (e) {}
+        showChairView(seatLinks);
+        return;
+    }
+
+    if (BallotBox.joinFromUrl()) {
+        show('rolePicker', false);
+        try {
+            const roster = await BallotBox.fetchRoster();
+            if (!roster) {
+                show('voteCard', true);
+                message('voteMsg', 'The chair has not published the candidate list yet. Reload in a moment.', 'err');
+                return;
             }
-            alert('✅ All votes have been reset. Members can vote again.');
+            candidates = roster.candidates;
+            dashboard = roster.dashboard;
+            renderDashboard();
+            show('dashboardCard', true);
+            if (roster.blinded) {
+                $('flagsContainer').insertAdjacentHTML('afterbegin',
+                    '<div class="warn-box" style="border-radius:0 8px 8px 0;">Double-blind mode: names and gender are withheld. Candidates are listed in a shuffled order.</div>');
+            }
+            renderVoteButtons();
+            show('voteCard', true);
+        } catch (err) {
+            show('voteCard', true);
+            message('voteMsg', err.message, 'err');
         }
     }
-    
-    function exportResults() {
-        const data = { 
-            timestamp: new Date().toISOString(), 
-            candidates: candidates.map(c => ({ 
-                name: c.name, 
-                careerStage: c.careerStage, 
-                institution: c.institution, 
-                gender: c.gender, 
-                hindex: c.hindex, 
-                mquotient: c.mquotient, 
-                priorInvitations: c.priorInvitations,
-                impact: c.impactFactors, 
-                considerations: c.careerConsiderations 
-            })), 
-            votes: aggregatedVotes 
-        };
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'}));
-        a.download = `equity-lens-${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-    }
-    
-    document.getElementById('hindex').addEventListener('input', updateMQDisplay);
-    document.getElementById('firstPubYear').addEventListener('input', updateMQDisplay);
-    loadCandidates();
-    updateMQDisplay();
-    
-    function loadVotes() {
-        const saved = localStorage.getItem('equityLens_votes_' + sessionId);
-        if (saved) aggregatedVotes = JSON.parse(saved);
-        else aggregatedVotes = {};
-    }
-    loadVotes();
+})();
 </script>
 </body>
 </html>
