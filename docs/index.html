@@ -220,6 +220,17 @@
         Publishing encrypts the candidate list in this browser and sends it to members'
         devices. The server stores only ciphertext and cannot read it.
     </p>
+    <div class="section" style="margin-top:16px;">
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="blindMode"> Double-blind: hide names and gender from members</label>
+        </div>
+        <div class="helper" style="margin-top:8px;">
+            Candidates appear as "Candidate 1", "Candidate 2" in a shuffled order, and key
+            publications are withheld since a title identifies the author. Institution,
+            career stage and metrics stay visible. You still see everything, so this reduces
+            bias among the other members, not your own. Decide before publishing.
+        </div>
+    </div>
     <button class="secondary" id="btnPublish" style="margin-top:12px;">Publish list and open voting</button>
     <div id="publishMsg"></div>
 </div>
@@ -255,6 +266,7 @@
         <li>It does not detect bias it has not been told to look for, including racial, disability and socioeconomic bias.</li>
         <li>It cannot verify the data entered. A wrong h-index produces a confident wrong flag.</li>
         <li>Gender is recorded as entered by the chair, not as self-identified by the candidate.</li>
+        <li>Double-blind mode hides names and gender from members, but a career stage, an institution and an h-index may still identify someone in a small field. It reduces bias; it does not guarantee anonymity. The chair is never blind.</li>
         <li>It has no memory across sessions, so it cannot yet show your committee's patterns over time.</li>
         <li>The chair knows which seat link went to which person, but never learns which ballot came from which seat.</li>
     </ul>
@@ -287,6 +299,38 @@ function normalizeInstitution(inst) {
 }
 function newId() {
     return 'c' + Math.random().toString(36).slice(2, 10);
+}
+
+// The chair's working state survives a reload. sessionStorage is per-tab and is
+// cleared when the tab closes, so nothing outlives the meeting.
+const DRAFT = { candidates: 'equityLens.draftCandidates', links: 'equityLens.seatLinks' };
+
+function saveDraft() {
+    try {
+        sessionStorage.setItem(DRAFT.candidates, JSON.stringify(candidates));
+    } catch (e) { /* storage unavailable; the session still works, just not across reloads */ }
+}
+
+function loadDraft() {
+    try {
+        candidates = JSON.parse(sessionStorage.getItem(DRAFT.candidates)) || [];
+    } catch (e) { candidates = []; }
+}
+
+function showChairView(seatLinks) {
+    if (seatLinks && seatLinks.length) {
+        $('seatLinksList').innerHTML = seatLinks
+            .map((l, i) => `<div class="seat-link">Seat ${i + 1}: ${escapeHtml(l)}</div>`).join('');
+        $('btnCopyLinks').dataset.links = seatLinks.join('\n');
+        show('seatLinksCard', true);
+    }
+    show('rolePicker', false);
+    show('entryCard', true);
+    show('publishCard', true);
+    show('resultsCard', true);
+    renderCandidates();
+    analyzeBias();
+    refreshResults();
 }
 
 // --- m-quotient -------------------------------------------------------------
@@ -353,6 +397,7 @@ function addCandidate() {
         .forEach((cb) => (cb.checked = false));
     updateMQDisplay();
     message('entryMsg', '');
+    saveDraft();
     renderCandidates();
     analyzeBias();
 }
@@ -369,12 +414,12 @@ function renderCandidates() {
                 <span class="badge ${c.mquotient >= 1 ? 'badge-green' : ''}">mq = ${c.mquotient ?? '?'}</span>
                 <span class="badge">${c.priorInvitations} prior invitations</span>
                 <button class="danger small" data-remove="${c.id}">Remove</button>
+                ${c.keyPubs && c.keyPubs.trim() ? `<div style="flex-basis:100%;font-size:12px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px;margin-top:4px;white-space:pre-line;">${escapeHtml(c.keyPubs.trim())}</div>` : ''}
             </div>`).join('');
 }
 
 // --- bias engine (unchanged logic, thresholds now match the specification) ---
-function analyzeBias() {
-    if (candidates.length < 2) { show('dashboardCard', false); return; }
+function computeDashboard(candidates) {
     const flags = [];
 
     candidates.forEach((c) => {
@@ -447,9 +492,30 @@ function analyzeBias() {
         }
     }
 
-    dashboard = { total: candidates.length, women, men, institutions: Object.keys(instCounts).length, flags };
+    return { total: candidates.length, women, men, institutions: Object.keys(instCounts).length, flags };
+}
+
+function analyzeBias() {
+    if (candidates.length < 2) { show('dashboardCard', false); return; }
+    dashboard = computeDashboard(candidates);
     renderDashboard();
     show('dashboardCard', true);
+}
+
+// Masking happens here, in the chair's browser, before anything is encrypted.
+// The hidden fields never leave this machine, so there is nothing for a member
+// to uncover in developer tools.
+function maskCandidates(list) {
+    const shuffled = [...list];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.map((c, i) => ({
+        ...c,
+        name: `Candidate ${i + 1}`,
+        keyPubs: '',
+    }));
 }
 
 function renderDashboard() {
@@ -577,6 +643,7 @@ $('candidateList').addEventListener('click', (e) => {
     const id = e.target.dataset.remove;
     if (!id) return;
     candidates = candidates.filter((c) => c.id !== id);
+    saveDraft();
     renderCandidates();
     analyzeBias();
 });
@@ -595,16 +662,8 @@ $('btnOpenSession').addEventListener('click', async () => {
     $('btnOpenSession').disabled = true;
     try {
         const { seatLinks } = await BallotBox.openSession(quorum);
-        $('seatLinksList').innerHTML = seatLinks
-            .map((l, i) => `<div class="seat-link">Seat ${i + 1}: ${escapeHtml(l)}</div>`).join('');
-        $('btnCopyLinks').dataset.links = seatLinks.join('\n');
-        show('rolePicker', false);
-        show('seatLinksCard', true);
-        show('entryCard', true);
-        show('publishCard', true);
-        show('resultsCard', true);
-        renderCandidates();
-        refreshResults();
+        sessionStorage.setItem(DRAFT.links, JSON.stringify(seatLinks));
+        showChairView(seatLinks);
     } catch (err) {
         message('roleMsg', err.message, 'err');
         $('btnOpenSession').disabled = false;
@@ -618,9 +677,25 @@ $('btnCopyLinks').addEventListener('click', (e) => {
 
 $('btnPublish').addEventListener('click', async () => {
     if (candidates.length < 2) { message('publishMsg', 'Add at least two candidates first.', 'err'); return; }
+    const blinded = $('blindMode').checked;
+
+    // In blind mode the flags are computed from the masked list, so their text
+    // refers to "Candidate 2" rather than naming anyone.
+    const forMembers = blinded ? maskCandidates(candidates) : candidates;
+    const memberDashboard = computeDashboard(forMembers);
+    const payload = {
+        blinded,
+        dashboard: memberDashboard,
+        candidates: blinded
+            ? forMembers.map(({ gender, ...rest }) => rest)
+            : forMembers,
+    };
+
     try {
-        await BallotBox.publishRoster(candidates);
-        message('publishMsg', 'Published. Members can now vote from their own devices. You can still correct the list until the first ballot arrives.', 'ok');
+        await BallotBox.publishRoster(payload);
+        message('publishMsg', blinded
+            ? 'Published in double-blind mode. Members see candidates without names or gender. You can still correct the list until the first ballot arrives.'
+            : 'Published. Members can now vote from their own devices. You can still correct the list until the first ballot arrives.', 'ok');
     } catch (err) {
         message('publishMsg', err.message, 'err');
     }
@@ -632,12 +707,24 @@ $('btnExport').addEventListener('click', exportSession);
 $('btnErase').addEventListener('click', async () => {
     if (!confirm('Delete all ballots and the encrypted candidate list from the server? This cannot be undone.')) return;
     await BallotBox.erase();
+    sessionStorage.removeItem(DRAFT.candidates);
+    sessionStorage.removeItem(DRAFT.links);
     location.reload();
 });
 
 // --- startup ----------------------------------------------------------------
 (async function start() {
     updateMQDisplay();
+
+    // Chair returning after a reload: session and key are still in this tab.
+    if (BallotBox.isChair()) {
+        loadDraft();
+        let seatLinks = [];
+        try { seatLinks = JSON.parse(sessionStorage.getItem(DRAFT.links)) || []; } catch (e) {}
+        showChairView(seatLinks);
+        return;
+    }
+
     if (BallotBox.joinFromUrl()) {
         show('rolePicker', false);
         try {
@@ -647,8 +734,14 @@ $('btnErase').addEventListener('click', async () => {
                 message('voteMsg', 'The chair has not published the candidate list yet. Reload in a moment.', 'err');
                 return;
             }
-            candidates = roster;
-            analyzeBias();
+            candidates = roster.candidates;
+            dashboard = roster.dashboard;
+            renderDashboard();
+            show('dashboardCard', true);
+            if (roster.blinded) {
+                $('flagsContainer').insertAdjacentHTML('afterbegin',
+                    '<div class="warn-box" style="border-radius:0 8px 8px 0;">Double-blind mode: names and gender are withheld. Candidates are listed in a shuffled order.</div>');
+            }
             renderVoteButtons();
             show('voteCard', true);
         } catch (err) {
