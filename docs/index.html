@@ -517,10 +517,16 @@ async function castBallot(candidateId, name, btn) {
     }
 }
 
+function lockPublishing(reason) {
+    $('btnPublish').disabled = true;
+    $('btnPublish').textContent = reason;
+}
+
 // --- chair results ----------------------------------------------------------
 async function refreshResults() {
     try {
         const data = await BallotBox.tally();
+        if (data.cast > 0) lockPublishing('Voting has started');
         if (data.sealed) {
             $('sealStatus').textContent =
                 `Sealed. ${data.cast} of ${data.quorum} ballots received. Results unlock when all are in.`;
@@ -612,10 +618,11 @@ $('btnPublish').addEventListener('click', async () => {
     if (candidates.length < 2) { message('publishMsg', 'Add at least two candidates first.', 'err'); return; }
     try {
         await BallotBox.publishRoster(candidates);
-        message('publishMsg', 'Published. Members can now vote from their own devices.', 'ok');
+        message('publishMsg', 'Published. Members can now vote from their own devices. You can still correct the list until the first ballot arrives.', 'ok');
     } catch (err) {
         message('publishMsg', err.message, 'err');
     }
+    refreshResults();
 });
 
 $('btnRefresh').addEventListener('click', refreshResults);
