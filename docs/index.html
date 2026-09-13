@@ -35,6 +35,7 @@
     button:disabled { background: #9ca3af; cursor: not-allowed; }
     button.secondary { background: #10b981; }
     button.secondary:hover { background: #059669; }
+    button.secondary:disabled, button.outline:disabled, button.danger:disabled { background: #9ca3af; color: white; border-color: #9ca3af; }
     button.outline { background: white; color: #2563eb; border: 1px solid #2563eb; }
     button.danger { background: #ef4444; }
     button.small { padding: 5px 12px; font-size: 12px; }
@@ -520,6 +521,7 @@ async function castBallot(candidateId, name, btn) {
 function lockPublishing(reason) {
     $('btnPublish').disabled = true;
     $('btnPublish').textContent = reason;
+    message('publishMsg', 'The candidate list is now frozen. Ballots already cast refer to it.', 'ok');
 }
 
 // --- chair results ----------------------------------------------------------
