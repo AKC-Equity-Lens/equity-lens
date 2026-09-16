@@ -107,6 +107,16 @@
     </p>
     <div class="form-grid">
         <div class="form-field">
+            <label for="profileSelect">What kind of selection is this?<span class="required-star">*</span></label>
+            <select id="profileSelect">
+                <option value="speaker">Speaker invitation</option>
+                <option value="award">Award or prize</option>
+                <option value="junior-hire">Junior hire</option>
+                <option value="senior-hire">Senior hire or professorship</option>
+            </select>
+            <div class="helper">Sets which criteria are collected and which checks run.</div>
+        </div>
+        <div class="form-field">
             <label for="quorum">How many members will vote?<span class="required-star">*</span></label>
             <input type="number" id="quorum" min="2" max="50" value="5">
             <div class="helper">Results stay sealed until this many ballots are in.</div>
@@ -136,6 +146,28 @@
     </div>
     <div id="seatLinksList" style="margin-top:16px;"></div>
     <button class="outline" id="btnCopyLinks">Copy all links</button>
+</div>
+
+<!-- CHECKS IN USE (chair) -->
+<div class="card hidden" id="checksCard">
+    <h2>Checks in use</h2>
+    <p style="font-size:14px;color:#4b5563;">Selection type: <strong id="profileName">—</strong></p>
+    <div class="section" style="margin-top:16px;">
+        <div class="section-title">Always on</div>
+        <div class="helper">
+            Gender balance, institutional concentration, career interruptions and impact beyond
+            citations. These have no switch. A check a committee can disable on an inconvenient
+            day is not a check.
+        </div>
+    </div>
+    <div class="section">
+        <div class="section-title">Optional for this selection type</div>
+        <div class="checkbox-group" id="optionalFlags"></div>
+        <div class="helper" style="margin-top:10px;">
+            Anything switched off here is recorded alongside the session, so the open dataset
+            shows which checks were active rather than quietly omitting them.
+        </div>
+    </div>
 </div>
 
 <!-- CANDIDATE ENTRY (chair only) -->
@@ -192,8 +224,8 @@
                 <label for="firstPubYear">Year of first publication<span class="required-star">*</span></label>
                 <input type="number" id="firstPubYear" min="1950" value="2020">
             </div>
-            <div class="form-field">
-                <label for="priorInvites">Prior invitations (last 3 years)<span class="required-star">*</span></label>
+            <div class="form-field" id="priorField">
+                <label for="priorInvites"><span id="priorLabel">Prior invitations (last 3 years)</span><span class="required-star">*</span></label>
                 <input type="number" id="priorInvites" min="0" value="0">
             </div>
         </div>
@@ -224,6 +256,20 @@
             For example parental leave, caregiving, health conditions, military or civil service.
             Only the fact of an interruption is recorded, never the reason — which is why this
             tool holds no health data about anyone.
+        </div>
+    </div>
+
+    <div class="section hidden" id="hireSection">
+        <div class="section-title">Role-specific criteria</div>
+        <div class="checkbox-group" id="hireCheckboxes">
+            <label><input type="checkbox" value="teaching"> Teaching portfolio</label>
+            <label><input type="checkbox" value="supervision"> Supervision record</label>
+            <label><input type="checkbox" value="funding"> Third-party funding</label>
+            <label><input type="checkbox" value="mobility"> International mobility</label>
+        </div>
+        <div class="helper" style="margin-top:8px;">
+            Recorded and shown in the candidate table. No flag is attached to these yet — they
+            inform the committee rather than trigger a check.
         </div>
     </div>
 
@@ -465,6 +511,72 @@ function loadDraft() {
     } catch (e) { candidates = []; }
 }
 
+// --- selection-type profiles ------------------------------------------------
+// One object, read by both the form and the bias engine. Adding a selection type
+// means adding an entry here, not an `if` somewhere in the rendering code.
+
+const PROFILES = {
+    speaker: {
+        label: 'Speaker invitation',
+        priorLabel: 'Prior invitations (last 3 years)',
+        fields: { prior: true, hire: false },
+        optional: { familiarity: true, careerStageProductivity: true },
+    },
+    award: {
+        label: 'Award or prize',
+        priorLabel: 'Prior awards (last 3 years)',
+        fields: { prior: true, hire: false },
+        optional: { familiarity: true, careerStageProductivity: true },
+    },
+    'junior-hire': {
+        label: 'Junior hire',
+        priorLabel: 'Prior appointments',
+        fields: { prior: false, hire: true },
+        optional: { familiarity: false, careerStageProductivity: true },
+    },
+    'senior-hire': {
+        label: 'Senior hire or professorship',
+        priorLabel: 'Prior appointments',
+        fields: { prior: false, hire: true },
+        optional: { familiarity: false, careerStageProductivity: true },
+    },
+};
+
+const OPTIONAL_FLAGS = {
+    familiarity: 'Familiarity bias',
+    careerStageProductivity: 'Career-stage productivity',
+};
+
+let profileKey = 'speaker';
+let flagConfig = { ...PROFILES.speaker.optional };
+
+function saveConfig() {
+    try {
+        sessionStorage.setItem('equityLens.config', JSON.stringify({ profileKey, flagConfig }));
+    } catch (e) { /* storage unavailable */ }
+}
+
+function loadConfig() {
+    try {
+        const c = JSON.parse(sessionStorage.getItem('equityLens.config'));
+        if (c && PROFILES[c.profileKey]) { profileKey = c.profileKey; flagConfig = c.flagConfig; }
+    } catch (e) { /* keep defaults */ }
+}
+
+function applyProfile() {
+    const p = PROFILES[profileKey];
+    $('priorField').classList.toggle('hidden', !p.fields.prior);
+    $('priorLabel').textContent = p.priorLabel;
+    $('hireSection').classList.toggle('hidden', !p.fields.hire);
+    $('profileName').textContent = p.label;
+}
+
+function renderFlagToggles() {
+    $('optionalFlags').innerHTML = Object.entries(OPTIONAL_FLAGS).map(([key, label]) =>
+        `<label><input type="checkbox" data-flag="${key}"${flagConfig[key] ? ' checked' : ''}> ${label}</label>`
+    ).join('');
+}
+
 function showChairView(seatLinks) {
     if (seatLinks && seatLinks.length) {
         $('seatLinksList').innerHTML = seatLinks
@@ -473,6 +585,9 @@ function showChairView(seatLinks) {
         show('seatLinksCard', true);
     }
     show('rolePicker', false);
+    show('checksCard', true);
+    applyProfile();
+    renderFlagToggles();
     show('entryCard', true);
     show('publishCard', true);
     show('resultsCard', true);
@@ -517,6 +632,7 @@ function addCandidate() {
     const hindex = parseInt($('hindex').value, 10) || 0;
     const firstPubYear = parseInt($('firstPubYear').value, 10) || null;
     const impactFactors = [...document.querySelectorAll('#impactCheckboxes input:checked')].map((cb) => cb.value);
+    const roleCriteria = [...document.querySelectorAll('#hireCheckboxes input:checked')].map((cb) => cb.value);
 
     candidates.push({
         id: newId(),
@@ -529,6 +645,7 @@ function addCandidate() {
         priorInvitations: parseInt($('priorInvites').value, 10) || 0,
         keyPubs: $('keyPubs').value,
         impactFactors,
+        roleCriteria,
         careerConsiderations: {
             interruption: $('careerInterruptionCheckbox').checked,
             nonTraditional: $('nonTraditionalCheckbox').checked,
@@ -540,7 +657,7 @@ function addCandidate() {
     $('hindex').value = '0';
     $('firstPubYear').value = '2020';
     $('priorInvites').value = '0';
-    document.querySelectorAll('#impactCheckboxes input, #careerInterruptionCheckbox, #nonTraditionalCheckbox')
+    document.querySelectorAll('#impactCheckboxes input, #hireCheckboxes input, #careerInterruptionCheckbox, #nonTraditionalCheckbox')
         .forEach((cb) => (cb.checked = false));
     updateMQDisplay();
     message('entryMsg', '');
@@ -566,10 +683,10 @@ function renderCandidates() {
 }
 
 // --- bias engine (unchanged logic, thresholds now match the specification) ---
-function computeDashboard(candidates) {
+function computeDashboard(candidates, config = flagConfig) {
     const flags = [];
 
-    candidates.forEach((c) => {
+    if (config.familiarity) candidates.forEach((c) => {
         if (c.priorInvitations >= 2) {
             flags.push({ severity: 'medium', type: 'Familiarity bias',
                 message: `${c.name} has been invited ${c.priorInvitations} times in three years.`,
@@ -601,7 +718,7 @@ function computeDashboard(candidates) {
             suggestion: 'Consider whether institutional diversity matters here.' });
     }
 
-    const withMQ = candidates.filter((c) => c.mquotient !== null);
+    const withMQ = config.careerStageProductivity ? candidates.filter((c) => c.mquotient !== null) : [];
     if (withMQ.length >= 2) {
         const best = withMQ.reduce((a, b) => (b.mquotient > a.mquotient ? b : a));
         const maxH = Math.max(...candidates.map((c) => c.hindex));
@@ -610,6 +727,13 @@ function computeDashboard(candidates) {
                 message: `${best.name} has the highest m-quotient (${best.mquotient}) despite a lower h-index.`,
                 suggestion: 'Compare m-quotient alongside raw h-index across career stages.' });
         }
+    }
+
+    const withImpact = candidates.filter((c) => (c.impactFactors || []).length > 0);
+    if (withImpact.length > 0) {
+        flags.push({ severity: 'low', type: 'Impact beyond citations',
+            message: `${withImpact.length} candidate(s) have impact the metrics above do not capture.`,
+            suggestion: 'Patents, policy citations, media reach and prizes never appear in an h-index.' });
     }
 
     const interrupted = candidates.filter((c) => c.careerConsiderations.interruption);
@@ -704,6 +828,7 @@ function renderDashboard() {
                     <td>${[
                         c.careerConsiderations.interruption ? 'interruption ≥ 6 months' : '',
                         c.careerConsiderations.nonTraditional ? 'non-traditional path' : '',
+                        ...(c.roleCriteria || []),
                     ].filter(Boolean).join(', ') || '—'}</td>
                 </tr>`).join('')}
         </table></div>`;
@@ -811,6 +936,9 @@ $('btnOpenSession').addEventListener('click', async () => {
         message('roleMsg', 'Enter how many members will vote (at least 2).', 'err');
         return;
     }
+    profileKey = $('profileSelect').value;
+    flagConfig = { ...PROFILES[profileKey].optional };
+    saveConfig();
     $('btnOpenSession').disabled = true;
     try {
         const { seatLinks } = await BallotBox.openSession(quorum);
@@ -835,7 +963,7 @@ $('btnPublish').addEventListener('click', async () => {
     // In blind mode the flags are computed from the masked list, so their text
     // refers to "Candidate 2" rather than naming anyone.
     const forMembers = blinded ? maskCandidates(candidates) : candidates;
-    const memberDashboard = computeDashboard(forMembers);
+    const memberDashboard = computeDashboard(forMembers, flagConfig);
     const payload = {
         blinded,
         dashboard: memberDashboard,
@@ -855,6 +983,14 @@ $('btnPublish').addEventListener('click', async () => {
     refreshResults();
 });
 
+$('optionalFlags').addEventListener('change', (e) => {
+    const key = e.target.dataset.flag;
+    if (!key) return;
+    flagConfig[key] = e.target.checked;
+    saveConfig();
+    analyzeBias();
+});
+
 $('btnRefresh').addEventListener('click', refreshResults);
 $('btnExport').addEventListener('click', exportSession);
 $('btnErase').addEventListener('click', async () => {
@@ -871,6 +1007,7 @@ $('btnErase').addEventListener('click', async () => {
 
     // Chair returning after a reload: session and key are still in this tab.
     if (BallotBox.isChair()) {
+        loadConfig();
         loadDraft();
         let seatLinks = [];
         try { seatLinks = JSON.parse(sessionStorage.getItem(DRAFT.links)) || []; } catch (e) {}
