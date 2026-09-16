@@ -156,8 +156,7 @@
         <div class="section-title">Always on</div>
         <div class="helper">
             Gender balance, institutional concentration, career interruptions and impact beyond
-            citations. These have no switch. A check a committee can disable on an inconvenient
-            day is not a check.
+            citations. These run for every selection type and have no switch.
         </div>
     </div>
     <div class="section">
@@ -202,7 +201,7 @@
                     <option value="">Select one</option>
                     <option value="female">Woman</option>
                     <option value="male">Man</option>
-                    <option value="other">Other / non-binary</option>
+                    <option value="other">Diverse / non-binary</option>
                 </select>
                 <div class="helper">Used only to compute the gender balance flag.</div>
             </div>
@@ -216,9 +215,14 @@
                 <label for="hindex">h-index<span class="required-star">*</span></label>
                 <div class="flex-row">
                     <input type="number" id="hindex" min="0" value="0" style="flex:1;">
-                    <button type="button" class="outline" id="btnScopus">Look up</button>
+                    <button type="button" class="outline" id="btnScopus">Look up h-index</button>
                 </div>
-                <div class="info-box">h-index = h papers with at least h citations each.</div>
+                <div class="info-box">
+                    h-index = h papers with at least h citations each. Scopus, Web of Science and
+                    Google Scholar give different values for the same person, so use one source
+                    for every candidate in the pool.
+                </div>
+                <div id="lookupMsg"></div>
             </div>
             <div class="form-field">
                 <label for="firstPubYear">Year of first publication<span class="required-star">*</span></label>
@@ -732,8 +736,8 @@ function computeDashboard(candidates, config = flagConfig) {
     const withImpact = candidates.filter((c) => (c.impactFactors || []).length > 0);
     if (withImpact.length > 0) {
         flags.push({ severity: 'low', type: 'Impact beyond citations',
-            message: `${withImpact.length} candidate(s) have impact the metrics above do not capture.`,
-            suggestion: 'Patents, policy citations, media reach and prizes never appear in an h-index.' });
+            message: `${withImpact.length} of ${candidates.length} candidates have recorded patents, policy citations, media coverage or prizes.`,
+            suggestion: 'None of this appears in an h-index or an m-quotient. Weigh it alongside the citation metrics rather than after them.' });
     }
 
     const interrupted = candidates.filter((c) => c.careerConsiderations.interruption);
@@ -745,6 +749,7 @@ function computeDashboard(candidates, config = flagConfig) {
 
     const women = candidates.filter((c) => c.gender === 'female').length;
     const men = candidates.filter((c) => c.gender === 'male').length;
+    const diverse = candidates.filter((c) => c.gender === 'other').length;
     const total = women + men;
     if (total >= 2) {
         if (women === 0) {
@@ -763,7 +768,7 @@ function computeDashboard(candidates, config = flagConfig) {
         }
     }
 
-    return { total: candidates.length, women, men, institutions: Object.keys(instCounts).length, flags };
+    return { total: candidates.length, women, men, diverse, institutions: Object.keys(instCounts).length, flags };
 }
 
 function analyzeBias() {
@@ -799,7 +804,7 @@ function renderDashboard() {
            </div>`
         : `
         <div class="stat-card"><div class="stat-number">${d.total}</div><div class="stat-label">Candidates</div></div>
-        <div class="stat-card"><div class="stat-number">${d.women} / ${d.men}</div><div class="stat-label">Women / men</div></div>
+        <div class="stat-card"><div class="stat-number">${d.women} / ${d.men} / ${d.diverse ?? 0}</div><div class="stat-label">Women / men / diverse</div></div>
         <div class="stat-card"><div class="stat-number">${d.institutions}</div><div class="stat-label">Institutions</div></div>
         <div class="stat-card"><div class="stat-number">${candidates.filter((c) => c.mquotient >= 1).length}</div><div class="stat-label">m-quotient ≥ 1.0</div></div>`;
 
@@ -926,8 +931,16 @@ $('candidateList').addEventListener('click', (e) => {
 });
 $('btnScopus').addEventListener('click', () => {
     const name = $('candidateName').value.trim();
-    if (!name) { message('entryMsg', 'Enter a name first.', 'err'); return; }
-    window.open(`https://www.scopus.com/search/form.uri?display=authorLookup&searchterm1=${encodeURIComponent(name)}`, '_blank');
+    if (!name) { message('lookupMsg', 'Enter the candidate name first.', 'err'); return; }
+    // Google Scholar shows an h-index without a login. Scopus Preview paywalls
+    // most author profiles, which makes it a poor default for a committee chair.
+    const url = `https://scholar.google.com/citations?view_op=search_authors&mauthors=${encodeURIComponent(name)}`;
+    const tab = window.open(url, '_blank', 'noopener');
+    if (!tab) {
+        $('lookupMsg').innerHTML = `<div class="msg err">Your browser blocked the new tab. <a href="${url}" target="_blank" rel="noopener">Open the search here</a> instead.</div>`;
+    } else {
+        message('lookupMsg', '');
+    }
 });
 
 $('btnOpenSession').addEventListener('click', async () => {
