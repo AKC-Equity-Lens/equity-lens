@@ -220,7 +220,8 @@
                 <div class="info-box">
                     h-index = h papers with at least h citations each. Scopus, Web of Science and
                     Google Scholar give different values for the same person, so use one source
-                    for every candidate in the pool.
+                    for every candidate in the pool. Full Scopus profiles need an institutional
+                    subscription; without one you will see a limited preview.
                 </div>
                 <div id="lookupMsg"></div>
             </div>
@@ -279,6 +280,7 @@
 
     <button id="btnAddCandidate">Add candidate</button>
     <div id="entryMsg"></div>
+    <div id="entryLockMsg"></div>
     <div id="candidateList" style="margin-top:20px;"></div>
 </div>
 
@@ -312,7 +314,10 @@
             bias among the other members, not your own. Decide before publishing.
         </div>
     </div>
-    <button class="secondary" id="btnPublish" style="margin-top:12px;">Publish list and open voting</button>
+    <div class="flex-row" style="margin-top:12px;">
+        <button class="secondary" id="btnPublish">Publish list and open voting</button>
+        <button class="outline hidden" id="btnReopen">Reopen the list to edit</button>
+    </div>
     <div id="publishMsg"></div>
 </div>
 
@@ -590,6 +595,7 @@ function showChairView(seatLinks) {
     }
     show('rolePicker', false);
     show('checksCard', true);
+    if (sessionStorage.getItem('equityLens.published') === '1') setEntryLocked(true);
     applyProfile();
     renderFlagToggles();
     show('entryCard', true);
@@ -670,6 +676,22 @@ function addCandidate() {
     analyzeBias();
 }
 
+// Once the slate is published the committee is looking at a fixed list. Adding
+// a candidate afterwards would mean the chair's dashboard contained someone who
+// was never on anyone's ballot.
+let entryLocked = false;
+
+function setEntryLocked(locked) {
+    entryLocked = locked;
+    $('btnAddCandidate').disabled = locked;
+    $('btnScopus').disabled = locked;
+    $('entryCard').querySelectorAll('input, select, textarea').forEach((el) => { el.disabled = locked; });
+    $('entryLockMsg').innerHTML = locked
+        ? '<div class="msg ok">The list is published and closed. Members are voting on exactly these candidates.</div>'
+        : '<div class="msg ok">The list is open for editing. Publish again before anyone votes, or members will see the old list.</div>';
+    renderCandidates();
+}
+
 function renderCandidates() {
     const genderMark = { female: 'woman', male: 'man', other: 'other' };
     $('candidateList').innerHTML = candidates.length === 0
@@ -681,7 +703,7 @@ function renderCandidates() {
                 <span class="badge">h = ${c.hindex}</span>
                 <span class="badge ${c.mquotient >= 1 ? 'badge-green' : ''}">mq = ${c.mquotient ?? '?'}</span>
                 <span class="badge">${c.priorInvitations} prior invitations</span>
-                <button class="danger small" data-remove="${c.id}">Remove</button>
+                ${entryLocked ? '' : `<button class="danger small" data-remove="${c.id}">Remove</button>`}
                 ${c.keyPubs && c.keyPubs.trim() ? `<div style="flex-basis:100%;font-size:12px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px;margin-top:4px;white-space:pre-line;">${escapeHtml(c.keyPubs.trim())}</div>` : ''}
             </div>`).join('');
 }
@@ -869,6 +891,8 @@ async function castBallot(candidateId, name, btn) {
 function lockPublishing(reason) {
     $('btnPublish').disabled = true;
     $('btnPublish').textContent = reason;
+    show('btnReopen', false);
+    setEntryLocked(true);
     message('publishMsg', 'The candidate list is now frozen. Ballots already cast refer to it.', 'ok');
 }
 
@@ -877,6 +901,7 @@ async function refreshResults() {
     try {
         const data = await BallotBox.tally();
         if (data.cast > 0) lockPublishing('Voting has started');
+        else if (sessionStorage.getItem('equityLens.published') === '1') show('btnReopen', true);
         if (data.sealed) {
             $('sealStatus').textContent =
                 `Sealed. ${data.cast} of ${data.quorum} ballots received. Results unlock when all are in.`;
@@ -934,13 +959,15 @@ $('btnScopus').addEventListener('click', () => {
     if (!name) { message('lookupMsg', 'Enter the candidate name first.', 'err'); return; }
     // Google Scholar shows an h-index without a login. Scopus Preview paywalls
     // most author profiles, which makes it a poor default for a committee chair.
-    const url = `https://scholar.google.com/citations?view_op=search_authors&mauthors=${encodeURIComponent(name)}`;
+    // Scopus retired the URL that carried a search term, so the free author
+    // lookup form opens empty. The name is placed on the clipboard so the chair
+    // can paste rather than retype it.
+    const url = 'https://www.scopus.com/freelookup/form/author.uri';
+    navigator.clipboard?.writeText(name).catch(() => {});
     const tab = window.open(url, '_blank', 'noopener');
-    if (!tab) {
-        $('lookupMsg').innerHTML = `<div class="msg err">Your browser blocked the new tab. <a href="${url}" target="_blank" rel="noopener">Open the search here</a> instead.</div>`;
-    } else {
-        message('lookupMsg', '');
-    }
+    $('lookupMsg').innerHTML = tab
+        ? `<div class="msg ok">Scopus author search opened. "${escapeHtml(name)}" is on your clipboard — paste it into the Author name field.</div>`
+        : `<div class="msg err">Your browser blocked the new tab. <a href="${url}" target="_blank" rel="noopener">Open the Scopus author search here</a>.</div>`;
 });
 
 $('btnOpenSession').addEventListener('click', async () => {
@@ -987,6 +1014,8 @@ $('btnPublish').addEventListener('click', async () => {
 
     try {
         await BallotBox.publishRoster(payload);
+        sessionStorage.setItem('equityLens.published', '1');
+        setEntryLocked(true);
         message('publishMsg', blinded
             ? 'Published in double-blind mode. Members see candidates without names or gender. You can still correct the list until the first ballot arrives.'
             : 'Published. Members can now vote from their own devices. You can still correct the list until the first ballot arrives.', 'ok');
@@ -1002,6 +1031,18 @@ $('optionalFlags').addEventListener('change', (e) => {
     flagConfig[key] = e.target.checked;
     saveConfig();
     analyzeBias();
+});
+
+$('btnReopen').addEventListener('click', async () => {
+    const status = await BallotBox.status();
+    if (status && status.cast > 0) {
+        message('publishMsg', 'Voting has already started. The list can no longer be changed.', 'err');
+        show('btnReopen', false);
+        return;
+    }
+    setEntryLocked(false);
+    show('btnReopen', false);
+    $('btnPublish').textContent = 'Republish the updated list';
 });
 
 $('btnRefresh').addEventListener('click', refreshResults);
