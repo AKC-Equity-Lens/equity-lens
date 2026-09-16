@@ -96,6 +96,17 @@
         </div>
     </div>
     <button id="btnOpenSession">Open session as chair</button>
+    <div class="section" style="margin-top:20px;">
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="optOutResearch"> Do not offer this session for research or AI training</label>
+        </div>
+        <div class="helper" style="margin-top:8px;">
+            Nothing is ever sent automatically. At the end of a session you may choose to
+            contribute an anonymous summary — coarse buckets only, no names, no institutions,
+            no link back to this session — to AKC's open dataset. Ticking this box removes
+            that option entirely, so it cannot be pressed by accident.
+        </div>
+    </div>
     <div id="roleMsg"></div>
 </div>
 
@@ -189,11 +200,14 @@
     <div class="section">
         <div class="section-title">Career stage considerations</div>
         <div class="checkbox-group">
-            <label><input type="checkbox" id="parentalLeaveCheckbox"> Parental leave over 6 months</label>
-            <label><input type="checkbox" id="careerBreakCheckbox"> Interruption for illness or caregiving</label>
+            <label><input type="checkbox" id="careerInterruptionCheckbox"> Career interruption of 6 months or more</label>
             <label><input type="checkbox" id="nonTraditionalCheckbox"> Non-traditional career path</label>
         </div>
-        <div class="helper" style="margin-top:8px;">These contextualise productivity fairly.</div>
+        <div class="helper" style="margin-top:8px;">
+            For example parental leave, caregiving, health conditions, military or civil service.
+            Only the fact of an interruption is recorded, never the reason — which is why this
+            tool holds no health data about anyone.
+        </div>
     </div>
 
     <button id="btnAddCandidate">Add candidate</button>
@@ -257,6 +271,123 @@
         <button class="danger" id="btnErase">Delete all session data</button>
     </div>
     <div id="resultsMsg"></div>
+</div>
+
+<!-- CONTRIBUTE TO OPEN DATASET (chair, after results) -->
+<div class="card hidden" id="contributeCard">
+    <h2>Contribute to the open dataset</h2>
+    <p style="font-size:14px;color:#4b5563;">
+        AKC is building an open record of how selection committees actually decide, so
+        committees can see where the field is going and where patterns repeat. Contributing
+        is entirely optional and nothing happens unless you press the button.
+    </p>
+    <div class="warn-box">
+        The record below contains no names, no institutions, no exact counts and no dates —
+        only coarse buckets. It carries no link back to this session or to any ballot. It is
+        anonymous, which is why it can be published openly and why no consent from candidates
+        is required. Read it before you send it.
+    </div>
+
+    <div class="form-grid" style="margin-top:16px;">
+        <div class="form-field">
+            <label for="selectionType">What kind of selection was this?<span class="required-star">*</span></label>
+            <select id="selectionType">
+                <option value="">Select one</option>
+                <option value="award">Award or prize</option>
+                <option value="speaker">Speaker invitation</option>
+                <option value="hire">Hiring or appointment</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label for="discipline">Field<span class="required-star">*</span></label>
+            <select id="discipline">
+                <option value="">Select one</option>
+                <option value="condensed-matter">Condensed matter</option>
+                <option value="particle-nuclear">Particle and nuclear</option>
+                <option value="optics-photonics">Optics and photonics</option>
+                <option value="atomic-molecular">Atomic and molecular</option>
+                <option value="astrophysics">Astrophysics</option>
+                <option value="biophysics">Biophysics</option>
+                <option value="applied-technical">Applied and technical</option>
+                <option value="theory-computation">Theory and computation</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+    </div>
+
+    <h3>Exactly what would be sent</h3>
+    <pre id="recordPreview" style="background:#f3f4f6;padding:14px;border-radius:8px;font-size:12px;overflow-x:auto;">Choose a selection type and field to see the record.</pre>
+
+    <div class="flex-row" style="margin-top:12px;">
+        <button class="secondary" id="btnContribute">Contribute this record</button>
+        <button class="outline" id="btnDownloadRecord">Download it instead</button>
+    </div>
+    <div id="contributeMsg"></div>
+</div>
+
+<!-- PRIVACY NOTICE (R6.4) -->
+<div class="card">
+    <h2>What this tool stores, and where</h2>
+
+    <h3>Stays on the chair's device</h3>
+    <p style="font-size:14px;color:#4b5563;">
+        Candidate names, institutions, career stages, gender, metrics and key publications are
+        typed into the chair's browser and held there. Before the list is sent to committee
+        members it is encrypted in that browser with AES-256-GCM. The key travels to members
+        inside their seat link, in the part after the <code>#</code>, which browsers never
+        transmit to a server. The server therefore holds ciphertext it has no key for.
+    </p>
+
+    <h3>Held on the server during a session</h3>
+    <ul style="font-size:14px;color:#4b5563;padding-left:20px;">
+        <li>The encrypted candidate list, unreadable without the key.</li>
+        <li>A one-way hash of each seat token, and whether that seat has voted.</li>
+        <li>A count per candidate identifier. The identifiers are random strings, not names.</li>
+    </ul>
+    <p style="font-size:14px;color:#4b5563;">
+        These sit in two separate tables with no column joining them, which is why no one —
+        including the chair, and including whoever operates the server — can determine how any
+        member voted. That is a property of the schema, not a promise.
+    </p>
+
+    <h3>Where it physically sits</h3>
+    <p style="font-size:14px;color:#4b5563;">
+        On Cloudflare Workers, in a storage object pinned to the European Union, so processing
+        and storage stay in the region. The object's random identifier is logged outside that
+        region for billing and diagnostics; it contains no personal data.
+    </p>
+
+    <h3>How long</h3>
+    <p style="font-size:14px;color:#4b5563;">
+        Until the chair presses "Delete all session data", which erases everything for that
+        session immediately. Automatic deletion once voting ends is not yet implemented and is
+        the next change planned. The chair's own working copy lives in the browser tab and
+        disappears when that tab is closed.
+    </p>
+
+    <h3>What leaves, and only if asked</h3>
+    <p style="font-size:14px;color:#4b5563;">
+        Nothing is transmitted to AKC's open dataset unless a chair explicitly chooses to
+        contribute, and the exact record is shown before it is sent. It contains coarse
+        buckets only — no names, no institutions, no exact counts, no dates finer than a
+        quarter, and no reference to the session it came from. It is anonymous rather than
+        pseudonymous, which is why it can be published openly. Ticking the opt-out box when
+        opening a session removes the option altogether.
+    </p>
+
+    <h3>What this tool does not do</h3>
+    <p style="font-size:14px;color:#4b5563;">
+        No cookies, no analytics, no tracking, no advertising, no third-party scripts, and no
+        accounts. Candidate data is never used to train anything.
+    </p>
+
+    <h3>Who is responsible</h3>
+    <p style="font-size:14px;color:#4b5563;">
+        The committee running the selection is the controller of its candidates' data and is
+        responsible for informing them, for its own legal basis, and for retention. AKC
+        supplies the software and operates the open dataset.
+    </p>
 </div>
 
 <!-- LIMITATIONS (R5.3) -->
@@ -382,8 +513,7 @@ function addCandidate() {
         keyPubs: $('keyPubs').value,
         impactFactors,
         careerConsiderations: {
-            parentalLeave: $('parentalLeaveCheckbox').checked,
-            careerBreak: $('careerBreakCheckbox').checked,
+            interruption: $('careerInterruptionCheckbox').checked,
             nonTraditional: $('nonTraditionalCheckbox').checked,
         },
     });
@@ -393,7 +523,7 @@ function addCandidate() {
     $('hindex').value = '0';
     $('firstPubYear').value = '2020';
     $('priorInvites').value = '0';
-    document.querySelectorAll('#impactCheckboxes input, #parentalLeaveCheckbox, #careerBreakCheckbox, #nonTraditionalCheckbox')
+    document.querySelectorAll('#impactCheckboxes input, #careerInterruptionCheckbox, #nonTraditionalCheckbox')
         .forEach((cb) => (cb.checked = false));
     updateMQDisplay();
     message('entryMsg', '');
@@ -465,7 +595,7 @@ function computeDashboard(candidates) {
         }
     }
 
-    const interrupted = candidates.filter((c) => c.careerConsiderations.parentalLeave || c.careerConsiderations.careerBreak);
+    const interrupted = candidates.filter((c) => c.careerConsiderations.interruption);
     if (interrupted.length > 0) {
         flags.push({ severity: 'low', type: 'Career interruptions noted',
             message: `${interrupted.length} candidate(s) had a recorded career interruption.`,
@@ -520,7 +650,13 @@ function maskCandidates(list) {
 
 function renderDashboard() {
     const d = dashboard;
-    $('statsGrid').innerHTML = `
+    // R3.6 minimum cell size: with fewer than three candidates, an aggregate
+    // count is a statement about identifiable individuals, not a statistic.
+    $('statsGrid').innerHTML = d.total < 3
+        ? `<div class="stat-card" style="grid-column:1/-1;text-align:left;">
+               <div style="font-size:13px;color:#4b5563;">Aggregate statistics are withheld for pools of fewer than three candidates. At this size a count identifies individuals rather than describing a pattern. The flags below still apply.</div>
+           </div>`
+        : `
         <div class="stat-card"><div class="stat-number">${d.total}</div><div class="stat-label">Candidates</div></div>
         <div class="stat-card"><div class="stat-number">${d.women} / ${d.men}</div><div class="stat-label">Women / men</div></div>
         <div class="stat-card"><div class="stat-number">${d.institutions}</div><div class="stat-label">Institutions</div></div>
@@ -549,8 +685,7 @@ function renderDashboard() {
                     <td${c.mquotient >= 1 ? ' style="background:#d1fae5;font-weight:bold;"' : ''}>${c.mquotient ?? 'n/a'}</td>
                     <td>${c.impactFactors.join(', ') || '—'}</td>
                     <td>${[
-                        c.careerConsiderations.parentalLeave ? 'parental leave' : '',
-                        c.careerConsiderations.careerBreak ? 'illness or caregiving' : '',
+                        c.careerConsiderations.interruption ? 'interruption ≥ 6 months' : '',
                         c.careerConsiderations.nonTraditional ? 'non-traditional path' : '',
                     ].filter(Boolean).join(', ') || '—'}</td>
                 </tr>`).join('')}
@@ -663,6 +798,7 @@ $('btnOpenSession').addEventListener('click', async () => {
     try {
         const { seatLinks } = await BallotBox.openSession(quorum);
         sessionStorage.setItem(DRAFT.links, JSON.stringify(seatLinks));
+        sessionStorage.setItem('equityLens.optOut', $('optOutResearch').checked ? '1' : '0');
         showChairView(seatLinks);
     } catch (err) {
         message('roleMsg', err.message, 'err');
