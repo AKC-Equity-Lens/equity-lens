@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>Equity Lens - equitable decision co-pilot | AKC DPG</title>
 <style>
     :root {
@@ -476,13 +478,17 @@
 </div>
 
 <footer>
+    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-a</span><br>
     Working Group on Equal Opportunities of the German Physical Society<br>
     A speedometer, not a speed limit.
 </footer>
 </div>
 
 <script type="module">
-import { BallotBox } from './ballot-box.js';
+// The build id ties the page and its script together. Bumping it on release
+// guarantees a browser cannot pair a new page with a cached old script.
+const BUILD = '2026-09-19-a';
+const { BallotBox } = await import(`./ballot-box.js?b=${BUILD}`);
 
 const CURRENT_YEAR = new Date().getFullYear();
 const $ = (id) => document.getElementById(id);
@@ -1056,8 +1062,31 @@ $('btnErase').addEventListener('click', async () => {
     location.reload();
 });
 
+// --- keep the page current --------------------------------------------------
+// GitHub Pages serves this file with its own cache lifetime, so a member opening
+// a seat link can otherwise be served a page from days ago. This fetches the
+// current page bypassing the cache, compares its build id, and reloads once if
+// they differ. Seat links carry session, seat and key, so all are preserved.
+async function ensureCurrentBuild() {
+    try {
+        const res = await fetch(location.pathname + '?cb=' + Date.now(), { cache: 'no-store' });
+        const text = await res.text();
+        const match = text.match(/const BUILD = '([^']+)'/);
+        if (!match || match[1] === BUILD) return false;
+
+        const params = new URLSearchParams(location.search);
+        if (params.get('_b') === match[1]) return false;   // already tried; do not loop
+        params.set('_b', match[1]);
+        location.replace(location.pathname + '?' + params.toString() + location.hash);
+        return true;
+    } catch (e) {
+        return false;   // offline or blocked: carry on with what we have
+    }
+}
+
 // --- startup ----------------------------------------------------------------
 (async function start() {
+    if (await ensureCurrentBuild()) return;
     updateMQDisplay();
 
     // Chair returning after a reload: session and key are still in this tab.
