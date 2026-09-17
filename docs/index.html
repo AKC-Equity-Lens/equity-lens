@@ -11,43 +11,66 @@
         --brand: #0E4C96;
         --brand-dark: #0A3A73;
         --gold: #E0A63C;
+        --ink: #1a1f29;
+        --muted: #55616f;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f3f4f6; color: #1f2937; padding: 20px; line-height: 1.55;
+        background: #f3f4f6; color: var(--ink);
+        padding: 20px; font-size: 16px; line-height: 1.6;
     }
-    .container { max-width: 1000px; margin: 0 auto; }
-    .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .container { max-width: 1040px; margin: 0 auto; }
+    .card {
+        background: white; border-radius: 16px; padding: 28px; margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1); scroll-margin-top: 16px;
+    }
+
+    /* --- brand bar --- */
     .brandbar { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; border-top: 3px solid var(--gold); }
     .brandbar .mark { width: 62px; height: auto; flex: 0 0 auto; }
     .brandbar .akc-mark { height: 42px; width: auto; margin-left: auto; }
     .title-section { flex: 1 1 240px; min-width: 0; }
-    .title-section h1 {
-        font-size: 31px; font-weight: 650; letter-spacing: -0.7px;
-        color: var(--brand); margin-bottom: 3px;
-    }
-    .org-line { font-size: 12px; color: #4b5563; letter-spacing: 0.1px; }
-    .subtitle { color: #6b7280; font-size: 14px; margin-top: 7px; }
+    .title-section h1 { font-size: 33px; font-weight: 650; letter-spacing: -0.7px; color: var(--brand); margin-bottom: 4px; }
+    .org-line { font-size: 14px; color: var(--muted); }
+    .subtitle { color: var(--muted); font-size: 16px; margin-top: 8px; }
+
+    /* --- headings and text --- */
     h2 {
-        font-size: 20px; font-weight: 600; letter-spacing: -0.2px; color: #111827;
-        margin-bottom: 18px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;
+        font-size: 23px; font-weight: 600; letter-spacing: -0.2px; color: #111827;
+        margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 12px;
     }
-    h3 { font-size: 15px; font-weight: 600; letter-spacing: -0.1px; margin: 22px 0 8px; color: #374151; }
-    p { max-width: 68ch; }
-    .section { background: #f9fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #e5e7eb; }
-    .section-title { font-size: 17px; font-weight: 600; margin-bottom: 16px; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 18px; }
-    .form-field { display: flex; flex-direction: column; gap: 6px; }
-    .form-field label { font-size: 13px; font-weight: 600; color: #374151; }
+    h3 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; color: #2c3644; }
+    p { max-width: 72ch; }
+    li { margin-bottom: 4px; }
+
+    .section { background: #f9fafb; border-radius: 12px; padding: 22px; margin-bottom: 20px; border: 1px solid #e5e7eb; }
+    .section-title { font-size: 19px; font-weight: 600; margin-bottom: 16px; }
+
+    /* --- forms --- */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .form-field { display: flex; flex-direction: column; gap: 7px; }
+    .form-field label { font-size: 15px; font-weight: 600; color: #2c3644; }
     .required-star { color: #ef4444; margin-left: 2px; }
-    .helper { font-size: 11px; color: #6b7280; }
-    .info-box { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 8px; font-size: 12px; color: #1e40af; margin-top: 8px; }
-    .warn-box { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px; border-radius: 8px; font-size: 13px; color: #92400e; margin-top: 8px; }
-    .mq-display { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 8px 12px; border-radius: 8px; font-size: 13px; color: #1e40af; margin-top: 8px; text-align: center; }
-    input, select, textarea { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; width: 100%; }
+    .helper { font-size: 14px; line-height: 1.5; color: var(--muted); }
+    .info-box { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 10px 14px; border-radius: 8px; font-size: 14px; line-height: 1.5; color: #1e40af; margin-top: 8px; }
+    .warn-box { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 14px; border-radius: 8px; font-size: 15px; line-height: 1.55; color: #8a5a0a; margin-top: 8px; }
+    .mq-display { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 10px 14px; border-radius: 8px; font-size: 15px; color: #1e40af; margin-top: 8px; text-align: center; }
+
+    /* 16px on inputs stops mobile browsers zooming in when a field is focused */
+    input, select, textarea {
+        padding: 12px 14px; border: 1px solid #d1d5db; border-radius: 8px;
+        font-size: 16px; font-family: inherit; width: 100%; color: var(--ink);
+    }
     input:focus, select:focus, textarea:focus { outline: 2px solid #3b82f6; outline-offset: 1px; border-color: #3b82f6; }
-    button { background: var(--brand); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+
+    /* 44px minimum height keeps every control comfortably tappable */
+    button {
+        background: var(--brand); color: white; border: none; padding: 12px 22px;
+        border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;
+        min-height: 44px; line-height: 1.3;
+    }
     button:hover { background: var(--brand-dark); }
     button:disabled { background: #9ca3af; cursor: not-allowed; }
     button.secondary { background: #10b981; }
@@ -55,39 +78,127 @@
     button.secondary:disabled, button.outline:disabled, button.danger:disabled { background: #9ca3af; color: white; border-color: #9ca3af; }
     button.outline { background: white; color: var(--brand); border: 1px solid var(--brand); }
     button.danger { background: #ef4444; }
-    button.small { padding: 5px 12px; font-size: 12px; }
-    .candidate-item { background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-    .badge { background: #e5e7eb; padding: 2px 8px; border-radius: 20px; font-size: 12px; }
+    button.small { padding: 8px 14px; font-size: 14px; min-height: 38px; }
+
+    /* --- candidates --- */
+    .candidate-item {
+        background: #f9fafb; padding: 16px; border-radius: 10px; margin-bottom: 10px;
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+        font-size: 15px;
+    }
+    .badge { background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-size: 14px; white-space: nowrap; }
     .badge-green { background: #d1fae5; color: #065f46; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 20px; }
-    .stat-card { background: #f9fafb; padding: 16px; border-radius: 12px; text-align: center; }
-    .stat-number { font-size: 26px; font-weight: bold; }
-    .stat-label { font-size: 11px; color: #6b7280; margin-top: 4px; }
-    .flag { padding: 14px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid; border-radius: 0 12px 12px 0; }
+
+    /* --- dashboard --- */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: #f9fafb; padding: 18px; border-radius: 12px; text-align: center; }
+    .stat-number { font-size: 30px; font-weight: bold; line-height: 1.2; }
+    .stat-label { font-size: 14px; color: var(--muted); margin-top: 6px; }
+    .flag { padding: 18px; margin-bottom: 12px; border-left: 4px solid; border-radius: 0 12px 12px 0; font-size: 16px; }
+    .flag strong { font-size: 17px; }
     .flag.high { background: #fef2f2; border-left-color: #ef4444; }
     .flag.medium { background: #fffbeb; border-left-color: #f59e0b; }
     .flag.low { background: #eff6ff; border-left-color: #3b82f6; }
-    .checkbox-group { display: flex; flex-wrap: wrap; gap: 16px; }
-    .checkbox-group label { display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 13px; }
-    .checkbox-group input { width: auto; }
+
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 14px 22px; }
+    .checkbox-group label {
+        display: flex; align-items: flex-start; gap: 9px; font-weight: normal;
+        font-size: 15px; line-height: 1.45; cursor: pointer; padding: 4px 0;
+    }
+    .checkbox-group input { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; }
+
     .hidden { display: none; }
     .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
     .error-border { border: 1px solid #ef4444 !important; background: #fef2f2 !important; }
-    .seal-status { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 12px; padding: 16px; text-align: center; font-size: 15px; color: #3730a3; }
-    .seat-link { font-family: ui-monospace, monospace; font-size: 12px; background: #f3f4f6; padding: 8px; border-radius: 6px; word-break: break-all; margin-bottom: 6px; }
-    .results-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    .results-table th, .results-table td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; }
-    .results-table th { background: #f3f4f6; }
-    .msg { padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 14px; }
+
+    /* --- ballots --- */
+    .seal-status { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 12px; padding: 18px; text-align: center; font-size: 17px; color: #3730a3; }
+    .seat-link { font-family: ui-monospace, monospace; font-size: 13px; background: #f3f4f6; padding: 12px; border-radius: 8px; word-break: break-all; margin-bottom: 8px; line-height: 1.5; }
+    .results-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 16px; }
+    .results-table th, .results-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+    .results-table th { background: #f3f4f6; font-size: 15px; }
+    .msg { padding: 14px; border-radius: 8px; margin-top: 12px; font-size: 15px; line-height: 1.5; }
     .msg.ok { background: #d1fae5; color: #065f46; }
     .msg.err { background: #fef2f2; color: #991b1b; }
-    footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
-    table.detail { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.detail th, table.detail td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: left; }
-    table.detail th { background: #f3f4f6; }
+
+    footer { text-align: center; padding: 22px 20px 20px; color: var(--muted); font-size: 14px; }
+
+    .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .scroll-hint { display: none; font-size: 13px; color: var(--muted); margin-top: 6px; }
+    table.detail { width: 100%; border-collapse: collapse; font-size: 15px; }
+    table.detail th, table.detail td { padding: 12px 10px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+    table.detail th { background: #f3f4f6; font-size: 14px; white-space: nowrap; }
+
+    /* --- quick navigation ------------------------------------------------
+       A fixed bar so that on a phone, where a session is several screens
+       long, the committee can jump between sections instead of scrolling
+       past everything. Hidden until a session is actually open.           */
+    .quicknav {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+        background: #ffffff; border-top: 1px solid #e5e7eb;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.07);
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        display: none;
+    }
+    .quicknav-inner { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 1040px; margin: 0 auto; }
+    .quicknav button {
+        background: #eef2f7; color: var(--brand); font-size: 14px; font-weight: 600;
+        padding: 9px 14px; min-height: 40px; border-radius: 20px; white-space: nowrap; flex: 0 0 auto;
+    }
+    .quicknav button:hover { background: #dde5ef; }
+    .quicknav.visible { display: block; }
+    body.has-quicknav { padding-bottom: 82px; }
+
+    /* --- phones ----------------------------------------------------------- */
+    @media (max-width: 720px) {
+        body { padding: 10px; font-size: 16px; }
+        .card { padding: 18px; border-radius: 12px; margin-bottom: 16px; }
+        .section { padding: 16px; }
+        .title-section h1 { font-size: 27px; }
+        .brandbar { gap: 14px; }
+        .brandbar .mark { width: 46px; }
+        .brandbar .akc-mark { height: 32px; }
+        .subtitle { font-size: 15px; }
+        h2 { font-size: 21px; margin-bottom: 16px; }
+        h3 { font-size: 17px; }
+        .section-title { font-size: 18px; }
+        .form-grid { grid-template-columns: 1fr; gap: 18px; }
+
+        /* full-width controls are far easier to hit with a thumb */
+        .flex-row { gap: 10px; }
+        .flex-row > button, #voteButtons button, #btnAddCandidate, #btnOpenSession,
+        #btnPublish, #btnReopen, #btnContribute, #btnDownloadRecord { width: 100%; }
+        .flex-row > button.small { width: auto; }
+
+        /* name on its own line, badges wrapping together under it */
+        .candidate-item { align-items: flex-start; gap: 8px 10px; }
+        .candidate-item > span:first-child { flex-basis: 100%; }
+        .candidate-item button { width: 100%; }
+
+        .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .stat-card { padding: 14px; }
+        .stat-number { font-size: 26px; }
+        .checkbox-group { flex-direction: column; gap: 12px; }
+        .flag { padding: 15px; }
+        table.detail { font-size: 14px; }
+        table.detail th, table.detail td { padding: 10px 8px; }
+        .scroll-hint { display: block; }
+        .seat-link { font-size: 12px; }
+    }
+
+    /* the h-index field and its lookup button should not fight for one line */
+    @media (max-width: 480px) {
+        .flex-row { flex-direction: column; align-items: stretch; }
+        .flex-row > input { width: 100%; }
+    }
 </style>
 </head>
 <body>
+
+<nav class="quicknav" id="quickNav" aria-label="Jump to section">
+    <div class="quicknav-inner" id="quickNavInner"></div>
+</nav>
+
 <div class="container">
 
 <div class="card brandbar">
@@ -478,7 +589,7 @@
 </div>
 
 <footer>
-    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-a</span><br>
+    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-b</span><br>
     Working Group on Equal Opportunities of the German Physical Society<br>
     A speedometer, not a speed limit.
 </footer>
@@ -487,7 +598,7 @@
 <script type="module">
 // The build id ties the page and its script together. Bumping it on release
 // guarantees a browser cannot pair a new page with a cached old script.
-const BUILD = '2026-09-19-a';
+const BUILD = '2026-09-19-b';
 const { BallotBox } = await import(`./ballot-box.js?b=${BUILD}`);
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -495,7 +606,39 @@ const $ = (id) => document.getElementById(id);
 let candidates = [];
 let dashboard = null;
 
-function show(id, on = true) { $(id).classList.toggle('hidden', !on); }
+// Sections a committee may want to jump between, in page order.
+const NAV_SECTIONS = [
+    ['seatLinksCard', 'Links'],
+    ['checksCard', 'Checks'],
+    ['entryCard', 'Candidates'],
+    ['dashboardCard', 'Bias check'],
+    ['publishCard', 'Publish'],
+    ['voteCard', 'Vote'],
+    ['resultsCard', 'Ballot box'],
+];
+
+function updateQuickNav() {
+    const open = NAV_SECTIONS.filter(([id]) => {
+        const el = document.getElementById(id);
+        return el && !el.classList.contains('hidden');
+    });
+    // One destination is not navigation; the bar would only take up space.
+    if (open.length < 2) {
+        $('quickNav').classList.remove('visible');
+        document.body.classList.remove('has-quicknav');
+        return;
+    }
+    $('quickNavInner').innerHTML = open
+        .map(([id, label]) => `<button type="button" data-goto="${id}">${label}</button>`)
+        .join('');
+    $('quickNav').classList.add('visible');
+    document.body.classList.add('has-quicknav');
+}
+
+function show(id, on = true) {
+    $(id).classList.toggle('hidden', !on);
+    updateQuickNav();
+}
 function message(id, text, kind = 'ok') {
     $(id).innerHTML = text ? `<div class="msg ${kind}">${escapeHtml(text)}</div>` : '';
 }
@@ -846,7 +989,8 @@ function renderDashboard(showKeyPubs = true) {
 
     $('candidatesDetail').innerHTML = `
         <h3>Candidate detail</h3>
-        <div style="overflow-x:auto;">
+        <p class="scroll-hint">Scroll the table sideways to see every column.</p>
+        <div class="scroll-x">
         <table class="detail">
             <tr><th>Name</th><th>Career stage</th><th>Institution</th><th>h</th><th>Years</th><th>mq</th><th>Impact</th><th>Considerations</th>${showKeyPubs ? '<th>Key publications</th>' : ''}</tr>
             ${candidates.map((c) => `
@@ -918,13 +1062,13 @@ async function refreshResults() {
         $('sealStatus').textContent = `All ${data.quorum} ballots received.`;
         const total = data.results.reduce((sum, r) => sum + r.count, 0);
         $('resultsContainer').innerHTML = `
-            <table class="results-table">
+            <div class="scroll-x"><table class="results-table">
                 <tr><th>Candidate</th><th>Votes</th><th>Share</th></tr>
                 ${data.results.map((r) => {
                     const c = candidates.find((x) => x.id === r.candidate_id);
                     return `<tr><td>${escapeHtml(c ? c.name : r.candidate_id)}</td><td>${r.count}</td><td>${Math.round((r.count / total) * 100)}%</td></tr>`;
                 }).join('')}
-            </table>
+            </table></div>
             <div class="info-box" style="margin-top:12px;">
                 Totals only. The pairing between a member and a ballot was never stored,
                 so it cannot be recovered from these results.
@@ -1050,6 +1194,12 @@ $('btnReopen').addEventListener('click', async () => {
     setEntryLocked(false);
     show('btnReopen', false);
     $('btnPublish').textContent = 'Republish the updated list';
+});
+
+$('quickNavInner').addEventListener('click', (e) => {
+    const id = e.target.dataset.goto;
+    if (!id) return;
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 $('btnRefresh').addEventListener('click', refreshResults);
