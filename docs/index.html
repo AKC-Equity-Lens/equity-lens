@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>Equity Lens - equitable decision co-pilot | AKC DPG</title>
+<title>Equity Lens - equitable decision aid | AKC DPG</title>
 <style>
     :root {
         --brand: #0E4C96;
@@ -124,7 +124,16 @@
     footer { text-align: center; padding: 22px 20px 20px; color: var(--muted); font-size: 14px; }
 
     .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .scroll-hint { display: none; font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+    /* On a phone a wide table means scrolling sideways to find a column you do
+       not know is there. Below 720px the same data is stacked per candidate
+       instead, so nothing is hidden off the edge. */
+    .detail-cards { display: none; }
+    .detail-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .detail-card h4 { font-size: 17px; font-weight: 600; color: #111827; margin-bottom: 10px; }
+    .detail-row { display: flex; gap: 12px; padding: 7px 0; border-top: 1px solid #edf0f3; font-size: 15px; line-height: 1.45; }
+    .detail-row .k { flex: 0 0 43%; color: var(--muted); }
+    .detail-row .v { flex: 1; min-width: 0; word-break: break-word; white-space: pre-line; }
     table.detail { width: 100%; border-collapse: collapse; font-size: 15px; }
     table.detail th, table.detail td { padding: 12px 10px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
     table.detail th { background: #f3f4f6; font-size: 14px; white-space: nowrap; }
@@ -180,9 +189,8 @@
         .stat-number { font-size: 26px; }
         .checkbox-group { flex-direction: column; gap: 12px; }
         .flag { padding: 15px; }
-        table.detail { font-size: 14px; }
-        table.detail th, table.detail td { padding: 10px 8px; }
-        .scroll-hint { display: block; }
+        .detail-wrap { display: none; }
+        .detail-cards { display: block; }
         .seat-link { font-size: 12px; }
     }
 
@@ -206,7 +214,7 @@
     <div class="title-section">
         <h1>Equity Lens</h1>
         <div class="org-line">Working Group on Equal Opportunities of the German Physical Society</div>
-        <div class="subtitle">Equitable decision co-pilot for award and speaker selection</div>
+        <div class="subtitle">Equitable decision support for selection committees</div>
     </div>
     <img src="logo-akc.png" alt="AKC" class="akc-mark">
 </div>
@@ -589,7 +597,7 @@
 </div>
 
 <footer>
-    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-b</span><br>
+    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-d</span><br>
     Working Group on Equal Opportunities of the German Physical Society<br>
     A speedometer, not a speed limit.
 </footer>
@@ -598,7 +606,7 @@
 <script type="module">
 // The build id ties the page and its script together. Bumping it on release
 // guarantees a browser cannot pair a new page with a cached old script.
-const BUILD = '2026-09-19-b';
+const BUILD = '2026-09-19-d';
 const { BallotBox } = await import(`./ballot-box.js?b=${BUILD}`);
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -989,8 +997,7 @@ function renderDashboard(showKeyPubs = true) {
 
     $('candidatesDetail').innerHTML = `
         <h3>Candidate detail</h3>
-        <p class="scroll-hint">Scroll the table sideways to see every column.</p>
-        <div class="scroll-x">
+        <div class="detail-wrap scroll-x">
         <table class="detail">
             <tr><th>Name</th><th>Career stage</th><th>Institution</th><th>h</th><th>Years</th><th>mq</th><th>Impact</th><th>Considerations</th>${showKeyPubs ? '<th>Key publications</th>' : ''}</tr>
             ${candidates.map((c) => `
@@ -1009,7 +1016,31 @@ function renderDashboard(showKeyPubs = true) {
                     ].filter(Boolean).join(', ') || '—'}</td>
                     ${showKeyPubs ? `<td style="white-space:pre-line;font-size:12px;">${c.keyPubs && c.keyPubs.trim() ? escapeHtml(c.keyPubs.trim()) : '—'}</td>` : ''}
                 </tr>`).join('')}
-        </table></div>`;
+        </table></div>
+        <div class="detail-cards">
+            ${candidates.map((c) => {
+                const rows = [
+                    ['Career stage', escapeHtml(c.careerStage)],
+                    ['Institution', escapeHtml(c.institution)],
+                    ['h-index', c.hindex],
+                    ['Years active', c.yearsActive ?? '?'],
+                    ['m-quotient', c.mquotient ?? 'n/a'],
+                    ['Impact', c.impactFactors.join(', ') || '—'],
+                    ['Considerations', [
+                        c.careerConsiderations.interruption ? 'interruption ≥ 6 months' : '',
+                        c.careerConsiderations.nonTraditional ? 'non-traditional path' : '',
+                        ...(c.roleCriteria || []),
+                    ].filter(Boolean).join(', ') || '—'],
+                ];
+                if (showKeyPubs) {
+                    rows.push(['Key publications', c.keyPubs && c.keyPubs.trim() ? escapeHtml(c.keyPubs.trim()) : '—']);
+                }
+                return `<div class="detail-card">
+                    <h4>${escapeHtml(c.name)}</h4>
+                    ${rows.map(([k, v]) => `<div class="detail-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+                </div>`;
+            }).join('')}
+        </div>`;
 }
 
 // --- voting -----------------------------------------------------------------
