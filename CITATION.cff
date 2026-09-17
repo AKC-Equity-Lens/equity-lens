@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: "EquityLens: a transparency tool for selection committees"
+message: "If you use EquityLens in your work, please cite it."
+type: software
+abstract: >-
+  EquityLens is an open-source, privacy-preserving transparency tool that makes
+  structural patterns in a candidate pool visible to a selection committee before
+  it decides. It flags gender balance, institutional concentration, career
+  interruptions and impact beyond citation metrics, offers an optional
+  double-blind mode, and supports private voting in which the pairing between a
+  committee member and their ballot is never stored. It does not rank candidates,
+  recommend outcomes, or replace human judgment.
+authors:
+  - given-names: Ruzin
+    family-names: Aganoglu
+    affiliation: "Working Group on Equal Opportunities (AKC) of the German Physical Society (DPG)"
+  - name: "Working Group on Equal Opportunities (AKC) of the German Physical Society (DPG)"
+    alias: "DPG-AKC"
+    website: "https://www.dpg-physik.de/vereinigungen/fachuebergreifend/ak/akc"
+repository-code: "https://github.com/AKC-Equity-Lens/equity-lens"
+url: "https://akc-equity-lens.github.io/equity-lens/"
+license: MIT
+version: "0.2"
+date-released: "2026-09-19"
+keywords:
+  - AI governance
+  - equal opportunities
+  - bias detection
+  - selection processes
+  - human-centered design
+  - transparency
+  - privacy by design
+  - open source
