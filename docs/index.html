@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>Equity Lens - equitable decision co-pilot | AKC DPG</title>
 <style>
     :root {
@@ -476,13 +478,17 @@
 </div>
 
 <footer>
+    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-a</span><br>
     Working Group on Equal Opportunities of the German Physical Society<br>
     A speedometer, not a speed limit.
 </footer>
 </div>
 
 <script type="module">
-import { BallotBox } from './ballot-box.js';
+// The build id ties the page and its script together. Bumping it on release
+// guarantees a browser cannot pair a new page with a cached old script.
+const BUILD = '2026-09-19-a';
+const { BallotBox } = await import(`./ballot-box.js?b=${BUILD}`);
 
 const CURRENT_YEAR = new Date().getFullYear();
 const $ = (id) => document.getElementById(id);
@@ -816,7 +822,7 @@ function maskCandidates(list) {
     }));
 }
 
-function renderDashboard() {
+function renderDashboard(showKeyPubs = true) {
     const d = dashboard;
     // R3.6 minimum cell size: with fewer than three candidates, an aggregate
     // count is a statement about identifiable individuals, not a statistic.
@@ -842,7 +848,7 @@ function renderDashboard() {
         <h3>Candidate detail</h3>
         <div style="overflow-x:auto;">
         <table class="detail">
-            <tr><th>Name</th><th>Career stage</th><th>Institution</th><th>h</th><th>Years</th><th>mq</th><th>Impact</th><th>Considerations</th></tr>
+            <tr><th>Name</th><th>Career stage</th><th>Institution</th><th>h</th><th>Years</th><th>mq</th><th>Impact</th><th>Considerations</th>${showKeyPubs ? '<th>Key publications</th>' : ''}</tr>
             ${candidates.map((c) => `
                 <tr>
                     <td><strong>${escapeHtml(c.name)}</strong></td>
@@ -857,6 +863,7 @@ function renderDashboard() {
                         c.careerConsiderations.nonTraditional ? 'non-traditional path' : '',
                         ...(c.roleCriteria || []),
                     ].filter(Boolean).join(', ') || '—'}</td>
+                    ${showKeyPubs ? `<td style="white-space:pre-line;font-size:12px;">${c.keyPubs && c.keyPubs.trim() ? escapeHtml(c.keyPubs.trim()) : '—'}</td>` : ''}
                 </tr>`).join('')}
         </table></div>`;
 }
@@ -1055,8 +1062,31 @@ $('btnErase').addEventListener('click', async () => {
     location.reload();
 });
 
+// --- keep the page current --------------------------------------------------
+// GitHub Pages serves this file with its own cache lifetime, so a member opening
+// a seat link can otherwise be served a page from days ago. This fetches the
+// current page bypassing the cache, compares its build id, and reloads once if
+// they differ. Seat links carry session, seat and key, so all are preserved.
+async function ensureCurrentBuild() {
+    try {
+        const res = await fetch(location.pathname + '?cb=' + Date.now(), { cache: 'no-store' });
+        const text = await res.text();
+        const match = text.match(/const BUILD = '([^']+)'/);
+        if (!match || match[1] === BUILD) return false;
+
+        const params = new URLSearchParams(location.search);
+        if (params.get('_b') === match[1]) return false;   // already tried; do not loop
+        params.set('_b', match[1]);
+        location.replace(location.pathname + '?' + params.toString() + location.hash);
+        return true;
+    } catch (e) {
+        return false;   // offline or blocked: carry on with what we have
+    }
+}
+
 // --- startup ----------------------------------------------------------------
 (async function start() {
+    if (await ensureCurrentBuild()) return;
     updateMQDisplay();
 
     // Chair returning after a reload: session and key are still in this tab.
@@ -1080,7 +1110,7 @@ $('btnErase').addEventListener('click', async () => {
             }
             candidates = roster.candidates;
             dashboard = roster.dashboard;
-            renderDashboard();
+            renderDashboard(!roster.blinded);
             show('dashboardCard', true);
             if (roster.blinded) {
                 $('flagsContainer').insertAdjacentHTML('afterbegin',
