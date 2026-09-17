@@ -1,229 +1,149 @@
-# Equity Lens v0.2 — setup guide
+# Deploying your own instance
 
-Written for the AKC-Equity-Lens repository as it stands today: `index.html` and
-`README.md` at the root, GitHub Pages already running, and a Cloudflare account
-that already holds an unrelated Worker.
+Equity Lens has two halves, deployed to two places:
 
-Nothing here overwrites either of those.
+- **`docs/`** — the committee-facing interface. Static files, served by GitHub
+  Pages or any web server.
+- **`worker/`** — the ballot box. A small Cloudflare Worker that counts votes
+  and holds the encrypted candidate list while a session is open.
 
-The new version has two halves deployed to two places:
+They are separate because a static host cannot run code, and counting ballots
+needs code running somewhere neutral.
 
-- `docs/` — the page committees open. Goes to **GitHub Pages**.
-- `worker/` — the ballot box. Goes to **Cloudflare Workers**.
+You do not need to deploy anything to try the tool — there is a hosted instance
+linked from the README. Deploy your own if your institution needs the data under
+its own control, or if you want to modify the tool.
 
-They are separate because GitHub Pages can only serve files. It cannot run code,
-and counting ballots needs code running somewhere neutral.
-
----
-
-## Step 1 — Snapshot v0.1 first
-
-Two minutes, and after this nothing you do can lose the current version.
-
-1. In the repository, click **Releases** in the right sidebar (it says "No
-   releases published").
-2. Click **Create a new release**.
-3. Click **Choose a tag**, type `v0.1`, then click **Create new tag on publish**.
-4. Title it `v0.1 — workshop prototype`.
-5. Click **Publish release**.
-
-You now have a permanent, downloadable snapshot of the exact code you showed at
-the Geneva side event. It cannot be changed by anything that follows.
+> **If you self-host, your organisation is the data controller** for the
+> candidate data your committees enter. You are responsible for informing
+> candidates that their data is being processed, for your legal basis, and for
+> retention. See the privacy notice inside the application.
 
 ---
 
-## Step 2 — Upload the new files
+## 1. Prerequisites
 
-Do **not** upload anything to the repository root. The new app lives in its own
-folder, so your existing `index.html` stays exactly where it is.
+- A [Cloudflare](https://dash.cloudflare.com/sign-up) account. The free plan is
+  sufficient; no domain name is required.
+- [Node.js](https://nodejs.org) 20 or later, for Cloudflare's deployment tool.
 
-1. On the repository page, click **Add file → Upload files**.
-2. Drag in the `docs` folder and the `worker` folder.
-3. Scroll down, type a message like `Add v0.2 app and ballot worker`.
-4. Click **Commit changes**.
+Check Node with:
 
-The repository should now look like this:
-
-```
-equity-lens/
-├─ README.md          (unchanged)
-├─ index.html         (unchanged — this is v0.1)
-├─ SETUP.md
-├─ docs/
-│  ├─ index.html      (v0.2)
-│  └─ ballot-box.js
-└─ worker/
-   ├─ src/index.js
-   └─ wrangler.toml
+```bash
+node --version
 ```
 
-Two files are now called `index.html`. They do not collide — one is at the root,
-one is inside `docs`.
+## 2. Get the code
 
----
-
-## Step 3 — Keep v0.1 reachable, then switch Pages
-
-GitHub Pages serves one folder at a time, and it can only be the repository root
-or `/docs`. To keep the old version visible after switching, copy it first.
-
-1. Open the root `index.html` in GitHub and click the pencil icon to edit.
-2. Select all the text and copy it.
-3. Go to `docs`, click **Add file → Create new file**, name it `v1.html`, paste,
-   and commit.
-
-Now switch the source:
-
-4. Click **Settings**, then **Pages** in the left sidebar.
-5. Under "Build and deployment", keep Source as `Deploy from a branch`.
-6. Set branch to `main` and change the folder from `/ (root)` to `/docs`.
-7. Click **Save** and wait two or three minutes.
-
-Your two versions are then at:
-
-```
-https://akc-equity-lens.github.io/equity-lens/          (v0.2)
-https://akc-equity-lens.github.io/equity-lens/v1.html   (v0.1)
+```bash
+git clone https://github.com/AKC-Equity-Lens/equity-lens.git
+cd equity-lens
 ```
 
-A private repository can publish Pages on a paid GitHub plan, which you have.
-Note that R5.1 asks for the tool to be inspectable — that applies at release,
-not during the pilot, so private is fine for now.
+Or download the ZIP from the repository's **Code** button and extract it.
 
----
+## 3. Deploy the ballot box
 
-## Step 4 — Deploy the ballot box to Cloudflare
+```bash
+cd worker
+npx wrangler login      # opens a browser to authorise
+npx wrangler whoami     # confirm you are on the intended account
+npx wrangler deploy
+```
 
-This creates a **new, separate** Worker. Your existing `red-truth-67bd` is not
-touched: `wrangler deploy` only affects the Worker named in `wrangler.toml`,
-which is `equity-lens-ballots`.
+Wrangler prints the Worker's address, ending in `.workers.dev`. Keep it.
 
-First install Node.js (LTS) from [nodejs.org](https://nodejs.org) if you have
-not already. Check it with `node --version` in Terminal or PowerShell.
+If your Cloudflare login covers more than one account, add the target account's
+identifier to `wrangler.toml`:
 
-Then:
+```toml
+account_id = "your-account-id"
+```
 
-1. Download the `worker` folder to your computer.
-2. In Terminal, move into it:
+You will find it in the URL of your Cloudflare dashboard.
 
-   ```
-   cd ~/Downloads/equity-lens/worker
-   ```
+### Notes on the Worker
 
-   On Windows: `cd $HOME\Downloads\equity-lens\worker`
+- It uses a **Durable Object with SQLite storage**, which gives atomic
+  transactions. Workers KV is eventually consistent and would silently lose a
+  vote when two members submit at the same moment. Do not substitute it.
+- The object is pinned to the **EU jurisdiction**, so ballots are processed and
+  stored in the region. The object's random identifier is logged outside that
+  jurisdiction for billing and diagnostics; it contains no personal data. Record
+  this in your data protection assessment.
+- **Do not enable Cloudflare Access on this Worker.** Access requires a
+  Cloudflare login before any request reaches it, which would stop committee
+  members voting. Security here comes from single-use seat tokens.
 
-3. Log in:
+## 4. Publish the interface
 
-   ```
-   npx wrangler login
-   ```
+With GitHub Pages: in your fork, go to **Settings → Pages**, set the source to
+the `main` branch and the `/docs` folder, and save. Your address will be
+`https://<your-account>.github.io/<repo>/`.
 
-4. Confirm you are on the right account before deploying anything:
+Any static host works equally well. The interface must be **served over HTTP(S)**
+— opening `index.html` from disk will not work, because it loads ES modules.
 
-   ```
-   npx wrangler whoami
-   ```
+## 5. Connect the two halves
 
-   It should show the account behind Raganoglu@gmail.com. If it lists more than
-   one account, add your account id to `wrangler.toml` as
-   `account_id = "21bd2f30ccfa2dc744154c92c35ebb45"` — that value is visible in
-   your dashboard URL.
+Two edits, one on each side.
 
-5. Deploy:
-
-   ```
-   npx wrangler deploy
-   ```
-
-It prints an address like `https://equity-lens-ballots.your-name.workers.dev`.
-Write it down.
-
-Now check the separation held: open **Workers & Pages** in the dashboard. You
-should see **two** Workers — `red-truth-67bd` unchanged, and
-`equity-lens-ballots` newly created. If you only see one, stop and check which
-folder you ran the command from.
-
-### Do not enable Access on this Worker
-
-The dashboard offers "Protect this Worker behind Access". Leave it off. Access
-requires a Cloudflare login before any request reaches the Worker, which would
-block committee members from voting. Security here comes from the seat tokens:
-random, single-use, and never guessable.
-
----
-
-## Step 5 — Introduce the two halves to each other
-
-Two one-line edits. This is the step that most often goes wrong, so check each
-character.
-
-**Edit A.** In `docs/ballot-box.js`, near the top:
+**In `docs/ballot-box.js`**, set the Worker address from step 3:
 
 ```js
 const API = 'https://equity-lens-ballots.YOUR-SUBDOMAIN.workers.dev';
 ```
 
-Replace with the address from step 4. You can edit this directly on GitHub with
-the pencil icon.
-
-**Edit B.** In `worker/src/index.js`, near the top:
+**In `worker/src/index.js`**, add the origin serving your interface:
 
 ```js
 const ALLOWED_ORIGINS = [
-  'https://akc-equity-lens.github.io',
+  'https://your-account.github.io',
   'http://localhost:8080',
 ];
 ```
 
-For your account this is already correct — origin only, no repository name, no
-trailing slash. If you later move the app to a custom domain, change it here and
-redeploy.
+Origin only — no repository path, no trailing slash. Then redeploy the Worker
+(`npx wrangler deploy`) and publish the updated interface.
 
-After editing, run `npx wrangler deploy` once more.
+This step is where most deployments go wrong. If the application reports that it
+cannot reach the voting server, check both values character by character.
 
----
+## 6. Test before using it for a real decision
 
-## Step 6 — Test before showing anyone
+You need two browser contexts so that two "people" can hold different seats — a
+normal window and a private window, or two different browsers.
 
-You need two windows so two "people" can hold different seats. One normal window
-and one private window works.
+1. Open your instance. Set the number of voting members to **2** and open a
+   session as chair.
+2. Copy the two seat links.
+3. Add two candidates with different institutions and genders, so the checks have
+   something to work with.
+4. Publish the list.
+5. Open seat link 1 in the second context and vote.
+6. Back in the chair window, press **Refresh** in the Ballot box section.
 
-1. Open `https://akc-equity-lens.github.io/equity-lens/` in window one. This is
-   the chair.
-2. Set "How many members will vote" to **2**, click **Open session as chair**.
-3. Copy the two seat links.
-4. Add two candidates with different institutions and genders, so the bias
-   checks have something to work with.
-5. Click **Publish list and open voting**.
-6. Paste seat link 1 into window two. The candidate list should appear.
-7. Vote in window two.
-8. In window one, click **Refresh**. It must say *Sealed. 1 of 2 ballots
-   received*.
-9. Open seat link 2 in a third window and vote.
-10. Refresh window one. Results appear now.
+It must read *Sealed. 1 of 2 ballots received.* If it shows vote totals at that
+point, stop and report it — the seal is the core of the privacy design. See
+`SECURITY.md`.
 
-If step 8 shows results instead of the sealed message, stop and tell me. That
-would mean the seal is not working, and the seal is the whole privacy design.
+Then vote from seat link 2 and confirm results appear.
 
----
+## 7. Verify the privacy properties yourself
 
-## Checking it really is private
+Worth doing once, because the claim is only as good as the check.
 
-Worth doing once yourself, because the claim is only as good as the check.
+In the Cloudflare dashboard, open your Worker's Durable Object and inspect the
+tables. You will find:
 
-1. In the Cloudflare dashboard, open **Workers & Pages → equity-lens-ballots**.
-2. Find the Durable Object and open Data Studio.
+- `seats` — hashed seat tokens and whether each has voted
+- `tally` — a candidate identifier and a count
+- `roster` — an unreadable block of ciphertext
 
-You will see a `seats` table (hashed tokens, used yes or no), a `tally` table
-(candidate id and a count), and a `roster` table holding unreadable text. There
-is no column anywhere joining a seat to a ballot. That absence is the guarantee:
-the question "who voted for whom" has no answer in this schema, not because of a
-policy but because the data was never written.
-
-The unreadable `roster` text is the encrypted candidate list. The key never left
-the chair's browser.
-
----
+There is no column anywhere joining a seat to a ballot. That absence is the
+guarantee: the question "who voted for whom" has no answer in this schema. The
+`roster` text is the encrypted candidate list; the key never left the chair's
+browser.
 
 ## Costs
 
@@ -231,12 +151,15 @@ Nothing at committee scale. The Workers free plan includes Durable Objects with
 SQLite storage, and free-plan accounts are not charged for that storage. A
 session writes a handful of rows.
 
----
+## Local development
 
-## Still missing after v0.2
+```bash
+cd docs && python3 -m http.server 8080
+```
 
-- Configurable flags and weights (R1)
-- Double-blind mode, confidence indicators, flag dismissal (R2.8, R5.4, R5.5)
-- 30-day hashing of candidate names, differential privacy (R3.2, R3.5)
-- CSV upload (R4.2)
-- Longitudinal committee feedback and benchmarks (R7)
+Then open `http://localhost:8080`. Add `http://localhost:8080` to
+`ALLOWED_ORIGINS` and redeploy the Worker if you want the ballot box to answer a
+local interface.
+
+There is no build step and nothing to install for the interface — deliberately,
+so that what you review is exactly what runs.
