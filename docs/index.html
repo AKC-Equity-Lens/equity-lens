@@ -114,6 +114,25 @@
     /* --- ballots --- */
     .seal-status { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 12px; padding: 18px; text-align: center; font-size: 17px; color: #3730a3; }
     .seat-link { font-family: ui-monospace, monospace; font-size: 13px; background: #f3f4f6; padding: 12px; border-radius: 8px; word-break: break-all; margin-bottom: 8px; line-height: 1.5; }
+
+    /* One card per seat: a QR code to scan, the link to copy if scanning fails. */
+    .seat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-top: 16px; }
+    .seat-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: #fff; text-align: center; }
+    .seat-card h4 { font-size: 16px; font-weight: 600; color: var(--brand); margin-bottom: 10px; }
+    .seat-card .qr { background: #fff; line-height: 0; }
+    .seat-card .qr svg { width: 100%; height: auto; max-width: 220px; }
+    .seat-card .taken { font-size: 14px; color: #991b1b; margin-top: 8px; }
+    .seat-card .link { font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted); word-break: break-all; margin-top: 10px; line-height: 1.4; text-align: left; }
+    .seat-card button { margin-top: 10px; width: 100%; }
+
+    /* Presenting: one big code at a time for a room to scan from a screen. */
+    .qr-stage { display: none; position: fixed; inset: 0; z-index: 100; background: #fff; padding: 24px; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+    .qr-stage.visible { display: flex; }
+    .qr-stage h3 { font-size: 30px; color: var(--brand); margin: 0; }
+    .qr-stage .qr { line-height: 0; }
+    .qr-stage .qr svg { width: min(68vh, 88vw); height: auto; }
+    .qr-stage .caption { font-size: 16px; color: var(--muted); text-align: center; max-width: 620px; }
+    .qr-stage .controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .results-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 16px; }
     .results-table th, .results-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
     .results-table th { background: #f3f4f6; font-size: 15px; }
@@ -207,6 +226,17 @@
     <div class="quicknav-inner" id="quickNavInner"></div>
 </nav>
 
+<div class="qr-stage" id="qrStage">
+    <h3 id="qrStageTitle">Seat 1</h3>
+    <div class="qr" id="qrStageCode"></div>
+    <p class="caption">Scan with a phone camera to open this seat's ballot. Each code works once.</p>
+    <div class="controls">
+        <button class="outline" id="qrPrev">Previous</button>
+        <button id="qrNext">Next seat</button>
+        <button class="outline" id="qrClose">Close</button>
+    </div>
+</div>
+
 <div class="container">
 
 <div class="card brandbar">
@@ -262,11 +292,15 @@
 <div class="card hidden" id="seatLinksCard">
     <h2>Send one link to each member</h2>
     <div class="warn-box">
-        Each link works once. Send them privately, one per person. Anyone holding a
-        link can cast that seat's ballot, so do not post them in a shared channel.
+        Each link works once. Hand one seat to each person — by private message, or by
+        letting them scan its code. Anyone holding a link can cast that seat's ballot, so
+        show one code at a time rather than projecting them all.
     </div>
-    <div id="seatLinksList" style="margin-top:16px;"></div>
-    <button class="outline" id="btnCopyLinks">Copy all links</button>
+    <div class="flex-row" style="margin-top:4px;">
+        <button class="outline" id="btnCopyLinks">Copy all links</button>
+        <button class="outline" id="btnPresentQR">Present codes full screen</button>
+    </div>
+    <div id="seatLinksList" class="seat-grid"></div>
 </div>
 
 <!-- CHECKS IN USE (chair) -->
@@ -597,7 +631,7 @@
 </div>
 
 <footer>
-    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-d</span><br>
+    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-09-19-e</span><br>
     Working Group on Equal Opportunities of the German Physical Society<br>
     A speedometer, not a speed limit.
 </footer>
@@ -606,8 +640,16 @@
 <script type="module">
 // The build id ties the page and its script together. Bumping it on release
 // guarantees a browser cannot pair a new page with a cached old script.
-const BUILD = '2026-09-19-d';
+const BUILD = '2026-09-19-e';
 const { BallotBox } = await import(`./ballot-box.js?b=${BUILD}`);
+
+// QR rendering is optional: if the module is missing the links still work.
+let qrToSVG = null;
+try {
+    ({ qrToSVG } = await import(`./qr.js?b=${BUILD}`));
+} catch (e) {
+    console.warn('qr.js not found; seat links will be shown without QR codes.');
+}
 
 const CURRENT_YEAR = new Date().getFullYear();
 const $ = (id) => document.getElementById(id);
@@ -743,10 +785,23 @@ function renderFlagToggles() {
     ).join('');
 }
 
+let currentSeatLinks = [];
+
+function renderSeatLinks(links) {
+    currentSeatLinks = links;
+    $('seatLinksList').innerHTML = links.map((link, i) => `
+        <div class="seat-card">
+            <h4>Seat ${i + 1}</h4>
+            <div class="qr">${qrToSVG ? qrToSVG(link, 4) : ''}</div>
+            <div class="link">${escapeHtml(link)}</div>
+            <button type="button" class="outline small" data-copy="${i}">Copy this link</button>
+        </div>`).join('');
+    $('btnPresentQR').disabled = !qrToSVG || links.length === 0;
+}
+
 function showChairView(seatLinks) {
     if (seatLinks && seatLinks.length) {
-        $('seatLinksList').innerHTML = seatLinks
-            .map((l, i) => `<div class="seat-link">Seat ${i + 1}: ${escapeHtml(l)}</div>`).join('');
+        renderSeatLinks(seatLinks);
         $('btnCopyLinks').dataset.links = seatLinks.join('\n');
         show('seatLinksCard', true);
     }
@@ -1171,6 +1226,33 @@ $('btnOpenSession').addEventListener('click', async () => {
         message('roleMsg', err.message, 'err');
         $('btnOpenSession').disabled = false;
     }
+});
+
+$('seatLinksList').addEventListener('click', (e) => {
+    const i = e.target.dataset.copy;
+    if (i === undefined) return;
+    navigator.clipboard.writeText(currentSeatLinks[i] || '');
+    e.target.textContent = 'Copied';
+    setTimeout(() => { e.target.textContent = 'Copy this link'; }, 1600);
+});
+
+let stageIndex = 0;
+function showStage(i) {
+    if (!currentSeatLinks.length || !qrToSVG) return;
+    stageIndex = (i + currentSeatLinks.length) % currentSeatLinks.length;
+    $('qrStageTitle').textContent = `Seat ${stageIndex + 1} of ${currentSeatLinks.length}`;
+    $('qrStageCode').innerHTML = qrToSVG(currentSeatLinks[stageIndex], 4);
+    $('qrStage').classList.add('visible');
+}
+$('btnPresentQR').addEventListener('click', () => showStage(0));
+$('qrNext').addEventListener('click', () => showStage(stageIndex + 1));
+$('qrPrev').addEventListener('click', () => showStage(stageIndex - 1));
+$('qrClose').addEventListener('click', () => $('qrStage').classList.remove('visible'));
+document.addEventListener('keydown', (e) => {
+    if (!$('qrStage').classList.contains('visible')) return;
+    if (e.key === 'ArrowRight') showStage(stageIndex + 1);
+    if (e.key === 'ArrowLeft') showStage(stageIndex - 1);
+    if (e.key === 'Escape') $('qrStage').classList.remove('visible');
 });
 
 $('btnCopyLinks').addEventListener('click', (e) => {
