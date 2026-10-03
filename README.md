@@ -64,9 +64,6 @@ to challenge the indicators. See [CONTRIBUTING.md](CONTRIBUTING.md).
    bias check, and cast one ballot each.
 5. Results unlock only once every seat has voted, and show totals alone.
 
-Full instructions are in the user manual; a one-page workflow summary is also
-available from AKC.
-
 ---
 
 ## Privacy by design
@@ -76,7 +73,7 @@ than a policy promising not to answer them.
 
 - **The voter–ballot link is never written.** Hashed seat tokens and per-candidate
   counts live in two tables with no column joining them. Nobody — not the chair,
-  not AKC, not whoever operates the server — can reconstruct how a member voted.
+  not whoever operates the server — can reconstruct how a member voted.
 - **The candidate list is encrypted in the chair's browser** with AES-256-GCM
   before it is transmitted. The key travels to members inside the fragment of
   their seat link, which browsers never send to a server. The server holds
@@ -88,8 +85,8 @@ than a policy promising not to answer them.
 
 This is privacy *by design*, not a claim of compliance: GDPR compliance depends
 on the committee running the selection — their legal basis, their notice to
-candidates, their retention policy. They are the controller of that data, not
-AKC. The tool carries a privacy notice in its own interface stating exactly what
+candidates, their retention policy. They are the controller of that data.
+The tool carries a privacy notice in its own interface stating exactly what
 is held and where.
 
 ---
@@ -158,9 +155,8 @@ licence text travel with every copy.
 ### Name and marks
 
 The licence covers the code. It does **not** grant rights to the name "Equity
-Lens", the Equity Lens magnifier mark, or the AKC and DPG marks. You are free to
-fork and modify, but a derivative work must carry a different name and must not
-imply endorsement by AKC or DPG.
+Lens", the Equity Lens magnifier mark. You are free to
+fork and modify, but a derivative work must carry a different name.
 
 ### Documents and data
 
