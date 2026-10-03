@@ -11,9 +11,7 @@ A speedometer, not a speed limit.
 
 **[Try the live demo →](https://akc-equity-lens.github.io/equity-lens/)**
 
-An initiative of the [Working Group on Equal Opportunities
-(AKC)](https://www.dpg-physik.de/vereinigungen/fachuebergreifend/ak/akc) of the
-German Physical Society (DPG), developed through a multi-stakeholder co-creation
+Developed through a multi-stakeholder co-creation
 workshop held as an official side event of the first UN Global Dialogue on AI
 Governance (Geneva, July 2026).
 
