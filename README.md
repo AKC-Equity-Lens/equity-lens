@@ -171,6 +171,6 @@ attribution.
 
 ## Contact
 
-akc@dpg-physik.de · or open a GitHub Issue.
+Please open a GitHub Issue.
 
-© 2026 Ruzin Aganoglu and the Working Group on Equal Opportunities (AKC) of the German Physical Society (DPG)
+© 2026 Ruzin Aganoglu
