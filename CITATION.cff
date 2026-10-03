@@ -12,11 +12,7 @@ abstract: >-
   recommend outcomes, or replace human judgment.
 authors:
   - given-names: Ruzin
-    family-names: Aganoglu
-    affiliation: "Working Group on Equal Opportunities (AKC) of the German Physical Society (DPG)"
-  - name: "Working Group on Equal Opportunities (AKC) of the German Physical Society (DPG)"
-    alias: "AKC - DPG"
-    website: "https://www.dpg-physik.de/vereinigungen/fachuebergreifend/ak/akc"
+    family-names: Ağanoğlu
 repository-code: "https://github.com/AKC-Equity-Lens/equity-lens"
 url: "https://akc-equity-lens.github.io/equity-lens/"
 license: MIT
