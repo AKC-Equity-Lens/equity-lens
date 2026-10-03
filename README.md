@@ -151,6 +151,7 @@ If Equity Lens informs your work, please cite it. See `CITATION.cff`, or use the
 Licensed under the [MIT Licence](LICENSE). You may use, modify, distribute and
 sell this software, including commercially, provided the copyright notice and
 licence text travel with every copy.
+Conception and development by Ruzin Ağanoğlu.
 
 ### Name and marks
 
