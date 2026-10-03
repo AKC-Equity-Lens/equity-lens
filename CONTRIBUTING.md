@@ -109,7 +109,3 @@ By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 Contributions are accepted under the MIT Licence, the licence of this project.
 By opening a pull request you confirm you have the right to submit the work under
 that licence.
-
-## Contact
-
-akc@dpg-physik.de
