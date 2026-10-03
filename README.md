@@ -14,6 +14,7 @@ A speedometer, not a speed limit.
 Developed through a multi-stakeholder co-creation
 workshop held as an official side event of the first UN Global Dialogue on AI
 Governance (Geneva, July 2026).
+Developer: Ruzin Ağanoğlu
 
 ---
 
