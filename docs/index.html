@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>Equity Lens - equitable decision aid | AKC DPG</title>
+<title>Equity Lens - equitable decision support for selection committees</title>
 <style>
     :root {
         --brand: #0E4C96;
@@ -30,7 +30,6 @@
     /* --- brand bar --- */
     .brandbar { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; border-top: 3px solid var(--gold); }
     .brandbar .mark { width: 62px; height: auto; flex: 0 0 auto; }
-    .brandbar .akc-mark { height: 42px; width: auto; margin-left: auto; }
     .title-section { flex: 1 1 240px; min-width: 0; }
     .title-section h1 { font-size: 33px; font-weight: 650; letter-spacing: -0.7px; color: var(--brand); margin-bottom: 4px; }
     .org-line { font-size: 14px; color: var(--muted); }
@@ -185,7 +184,6 @@
         .title-section h1 { font-size: 27px; }
         .brandbar { gap: 14px; }
         .brandbar .mark { width: 46px; }
-        .brandbar .akc-mark { height: 32px; }
         .subtitle { font-size: 15px; }
         h2 { font-size: 21px; margin-bottom: 16px; }
         h3 { font-size: 17px; }
@@ -243,10 +241,8 @@
     <img src="logo-equity-lens.png" alt="" class="mark">
     <div class="title-section">
         <h1>Equity Lens</h1>
-        <div class="org-line">Working Group on Equal Opportunities of the German Physical Society</div>
         <div class="subtitle">Equitable decision support for selection committees</div>
     </div>
-    <img src="logo-akc.png" alt="AKC" class="akc-mark">
 </div>
 
 <!-- ROLE PICKER -->
@@ -281,7 +277,7 @@
         <div class="helper" style="margin-top:8px;">
             Nothing is ever sent automatically. At the end of a session you may choose to
             contribute an anonymous summary — coarse buckets only, no names, no institutions,
-            no link back to this session — to AKC's open dataset. Ticking this box removes
+            no link back to this session — to the Equity Lens open dataset. Ticking this box removes
             that option entirely, so it cannot be pressed by accident.
         </div>
     </div>
@@ -504,7 +500,7 @@
 <div class="card hidden" id="contributeCard">
     <h2>Contribute to the open dataset</h2>
     <p style="font-size:14px;color:#4b5563;">
-        AKC is building an open record of how selection committees actually decide, so
+        Equity Lens is building an open record of how selection committees actually decide, so
         committees can see where the field is going and where patterns repeat. Contributing
         is entirely optional and nothing happens unless you press the button.
     </p>
@@ -595,7 +591,7 @@
 
     <h3>What leaves, and only if asked</h3>
     <p style="font-size:14px;color:#4b5563;">
-        Nothing is transmitted to AKC's open dataset unless a chair explicitly chooses to
+        Nothing is transmitted to the open dataset unless a chair explicitly chooses to
         contribute, and the exact record is shown before it is sent. It contains coarse
         buckets only — no names, no institutions, no exact counts, no dates finer than a
         quarter, and no reference to the session it came from. It is anonymous rather than
@@ -612,8 +608,8 @@
     <h3>Who is responsible</h3>
     <p style="font-size:14px;color:#4b5563;">
         The committee running the selection is the controller of its candidates' data and is
-        responsible for informing them, for its own legal basis, and for retention. AKC
-        supplies the software and operates the open dataset.
+        responsible for informing them, for its own legal basis, and for retention. The
+        Equity Lens project supplies the software and operates the open dataset.
     </p>
 </div>
 
@@ -631,16 +627,16 @@
 </div>
 
 <footer>
-    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-10-29-b</span><br>
-    Working Group on Equal Opportunities of the German Physical Society<br>
-    A speedometer, not a speed limit.
+    <span id="buildStamp" style="font-size:11px;color:#c3c7cd;">build 2026-10-29-c</span><br>
+    A speedometer, not a speed limit.<br>
+    <span style="font-size:12px;">&copy; 2026 Ruzin Ağanoğlu &middot; <a href="https://github.com/AKC-Equity-Lens/equity-lens" style="color:inherit;">MIT licence, source on GitHub</a></span>
 </footer>
 </div>
 
 <script type="module">
 // The build id ties the page and its script together. Bumping it on release
 // guarantees a browser cannot pair a new page with a cached old script.
-const BUILD = '2026-10-29-b';
+const BUILD = '2026-10-29-c';
 const { BallotBox } = await import(`./ballot-box.js?b=${BUILD}`);
 
 // QR rendering is optional: if the module is missing the links still work.
