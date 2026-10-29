@@ -15,7 +15,7 @@
 
 // ---------------------------------------------------------------------------
 // CHANGE THIS to your own Worker address after deploying (see SETUP.md step 5).
-const API = 'https://equity-lens-ballots.raganoglu.workers.dev';
+const API = 'https://equity-lens-ballots.YOUR-SUBDOMAIN.workers.dev';
 // ---------------------------------------------------------------------------
 
 const LOCAL = {
@@ -128,16 +128,22 @@ export const BallotBox = {
     return {
       sessionId: data.sessionId,
       seatLinks: data.seatTokens.map(
-        (t) => `${base}?session=${data.sessionId}&seat=${t}#k=${roomKey}`,
+        // Everything a seat needs lives in the fragment. Browsers never send the
+        // fragment to any server, so neither the static host nor a proxy ever
+        // sees a seat token or the room key in a request or an access log.
+        (t) => `${base}#session=${data.sessionId}&seat=${t}&k=${roomKey}`,
       ),
     };
   },
 
   joinFromUrl() {
-    const params = new URLSearchParams(location.search);
-    const session = params.get('session');
-    const seat = params.get('seat');
-    const key = new URLSearchParams(location.hash.slice(1)).get('k');
+    const frag = new URLSearchParams(location.hash.slice(1));
+    // Links issued before build 2026-10-29 carried session and seat in the
+    // query string. Accept them so a session in progress is not broken.
+    const query = new URLSearchParams(location.search);
+    const session = frag.get('session') || query.get('session');
+    const seat = frag.get('seat') || query.get('seat');
+    const key = frag.get('k');
     if (!session || !seat || !key) return false;
 
     sessionStorage.setItem(LOCAL.session, session);
@@ -223,5 +229,29 @@ export const BallotBox = {
     const chairToken = sessionStorage.getItem(LOCAL.chair);
     if (session) await call(`/api/sessions/${session}`, { method: 'DELETE', chairToken });
     Object.values(LOCAL).forEach((k) => sessionStorage.removeItem(k));
+  },
+
+  // --- open benchmark archive ---------------------------------------------
+  // Records sent here are anonymous by construction and carry no reference to
+  // the session they came from. The server refuses anything outside its schema.
+
+  async contribute(record) {
+    const { ok, data } = await call('/api/archive/contribute', {
+      method: 'POST',
+      body: { record },
+    });
+    if (!ok) throw new Error(data.error || 'The record was refused.');
+
+    const session = this.sessionId();
+    const chairToken = sessionStorage.getItem(LOCAL.chair);
+    if (session) {
+      await call(`/api/sessions/${session}/contributed`, { method: 'POST', chairToken });
+    }
+    return true;
+  },
+
+  async archiveStats() {
+    const { ok, data } = await call('/api/archive/stats');
+    return ok ? data : null;
   },
 };
