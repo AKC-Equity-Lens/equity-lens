@@ -82,6 +82,9 @@ than a policy promising not to answer them.
 - **Erasure on demand.** The chair can delete a session's data at any time.
 - **No cookies, no analytics, no trackers, no third-party scripts, no accounts.**
 
+Who could learn what, and what the design does not solve, is written down in
+[THREAT-MODEL.md](THREAT-MODEL.md).
+
 This is privacy *by design*, not a claim of compliance: GDPR compliance depends
 on the committee running the selection — their legal basis, their notice to
 candidates, their retention policy. They are the controller of that data.
@@ -145,6 +148,8 @@ its own legal basis.
 - **[Requirement specification v0.0](Requirement_Specification_EquityLens_V0.pdf)**
   — the original July 2026 workshop output, superseded by v0.2 and kept for the
   record.
+- **[Threat model](THREAT-MODEL.md)** — who could learn what, and the residual
+  risks the design does not solve.
 - **[Deployment notes](SETUP.md)** — running your own instance.
 
 ---
