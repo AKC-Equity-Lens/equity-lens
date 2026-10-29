@@ -1,6 +1,6 @@
 # Equity Lens — threat model
 
-*Version 1.0, 29 October 2026. Describes the code as deployed at build `2026-10-29-b`. Every claim below can be checked against `worker/src/index.js` and `docs/ballot-box.js`; where the code and this document disagree, the code is right and this document has a bug — please open an issue.*
+*Version 1.0, 29 October 2026. Describes the code as deployed at build `2026-10-29-c`. Every claim below can be checked against `worker/src/index.js` and `docs/ballot-box.js`; where the code and this document disagree, the code is right and this document has a bug — please open an issue.*
 
 This is not a security certificate. It is a list of who might try to learn something they should not, what the design lets them learn, and what it does not solve. The residual risks are the most important section.
 
