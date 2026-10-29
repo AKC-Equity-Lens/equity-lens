@@ -15,7 +15,7 @@
 
 // ---------------------------------------------------------------------------
 // CHANGE THIS to your own Worker address after deploying (see SETUP.md step 5).
-const API = 'https://equity-lens-ballots.YOUR-SUBDOMAIN.workers.dev';
+const API = 'https://equity-lens-ballots.raganoglu.workers.dev';
 // ---------------------------------------------------------------------------
 
 const LOCAL = {
