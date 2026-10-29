@@ -11,10 +11,9 @@ A speedometer, not a speed limit.
 
 **[Try the live demo →](https://akc-equity-lens.github.io/equity-lens/)**
 
-Developed through a multi-stakeholder co-creation
-workshop held as an official side event of the first UN Global Dialogue on AI
-Governance (Geneva, July 2026).
-Developer: Ruzin Ağanoğlu
+Developed through a multi-stakeholder co-creation workshop held as an official
+side event of the first UN Global Dialogue on AI Governance (Geneva, July 2026).
+Conception and development by Ruzin Ağanoğlu.
 
 ---
 
@@ -134,6 +133,22 @@ its own legal basis.
 
 ---
 
+## Documentation
+
+- **[User guide](USER-GUIDE.md)** — how to run a session, what each flag means,
+  and what to do when something goes wrong. Written for chairs and committee
+  members, no technical background assumed.
+- **[Requirement specification v0.2](Requirement_Specification_EquityLens_V0.2.pdf)**
+  — the current specification: all 36 requirements from the co-creation
+  workshop, each with an implementation status and an honest note on what is
+  missing.
+- **[Requirement specification v0.0](Requirement_Specification_EquityLens_V0.pdf)**
+  — the original July 2026 workshop output, superseded by v0.2 and kept for the
+  record.
+- **[Deployment notes](SETUP.md)** — running your own instance.
+
+---
+
 ## Contributing
 
 Feedback, criticism of the indicators, and pilot reports are more valuable to us
@@ -148,16 +163,15 @@ If Equity Lens informs your work, please cite it. See `CITATION.cff`, or use the
 
 ## Licence
 
-Licensed under the [MIT Licence](LICENSE). You may use, modify, distribute and
-sell this software, including commercially, provided the copyright notice and
-licence text travel with every copy.
-Conception and development by Ruzin Ağanoğlu.
+Licensed under the [MIT Licence](LICENSE), copyright Ruzin Ağanoğlu. You may
+use, modify, distribute and sell this software, including commercially, provided
+the copyright notice and licence text travel with every copy.
 
 ### Name and marks
 
 The licence covers the code. It does **not** grant rights to the name "Equity
-Lens", the Equity Lens magnifier mark. You are free to
-fork and modify, but a derivative work must carry a different name.
+Lens" or the Equity Lens magnifier mark. You are free to fork and modify, but a
+derivative work must carry a different name.
 
 ### Documents and data
 
@@ -170,4 +184,4 @@ attribution.
 
 Please open a GitHub Issue.
 
-© 2026 Ruzin Aganoglu
+© 2026 Ruzin Ağanoğlu
